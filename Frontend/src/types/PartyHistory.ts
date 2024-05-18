@@ -2,9 +2,9 @@ import { ILocation } from '@/stores/usePartyStore';
 
 interface IUser {
   id: number;
-  role: 'ORGANIZER' | 'PARTICIPANT';
+  role: string;
   nickname: string;
-  gender: 'M' | 'F';
+  gender: string;
   ageGroup: string;
   profileImage?: string;
   brix?: number;
@@ -21,9 +21,9 @@ export interface IPartyHistory {
   arrivalsLocation: ILocation;
   arrivalsName: string;
   departuresDate: string;
-  departuresLocation: Location;
+  departuresLocation: ILocation;
   departuresName: string;
-  genderRestriction: 'ANY' | 'M' | 'F';
+  genderRestriction: string;
   maxParticipants: number;
   currentParticipants: number;
   createAt: string;

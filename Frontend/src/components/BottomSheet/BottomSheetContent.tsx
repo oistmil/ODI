@@ -10,7 +10,7 @@ interface IPartyListProps {
   partyList: IParty[];
 }
 
-const categoryList: { [key: string]: string } = {
+export const categoryList: { [key: string]: string } = {
   DAILY: '일상',
   UNIVERSITY: '대학교',
   COMMUTE: '출퇴근',
@@ -20,7 +20,7 @@ const categoryList: { [key: string]: string } = {
   RESERVIST: '예비군',
 };
 
-const categoryColorList: { [key: string]: string } = {
+export const categoryColorList: { [key: string]: string } = {
   DAILY: 'border-OD_GREEN text-green-500 bg-OD_GREEN bg-opacity-30',
   UNIVERSITY: 'border-OD_JORDYBLUE text-OD_JORDYBLUE bg-OD_JORDYBLUE bg-opacity-30',
   COMMUTE: 'border-OD_YELLOW text-OD_ORANGE bg-OD_YELLOW bg-opacity-30',
@@ -30,27 +30,27 @@ const categoryColorList: { [key: string]: string } = {
   RESERVIST: 'border-OD_SCARLET text-OD_SCARLET bg-OD_SCARLET bg-opacity-30',
 };
 
-const genderRestrictionList: { [key: string]: string } = {
+export const genderRestrictionList: { [key: string]: string } = {
   ANY: '성별무관',
   M: '남자만',
   F: '여자만',
 };
 
-const partyStateList: { [key: string]: string } = {
+export const partyStateList: { [key: string]: string } = {
   GATHERING: '모집중',
   COMPLETED: '모집 완료',
   SETTLING: '정산중',
   SETTLED: '정산완료',
 };
 
-const stateColorList: { [key: string]: string } = {
+export const stateColorList: { [key: string]: string } = {
   GATHERING: 'text-green-500 bg-OD_GREEN bg-opacity-30',
   COMPLETED: 'text-OD_ORANGE bg-OD_YELLOW bg-opacity-30',
   SETTLING: 'text-OD_JORDYBLUE bg-OD_JORDYBLUE bg-opacity-30',
   SETTLED: 'border-gray-200 bg-gray-200 text-gray-500',
 };
 
-const calcDate = (dateString: string) => {
+export const calcDate = (dateString: string) => {
   const date = new Date(dateString.replace(' ', 'T') + '+09:00');
   const now = new Date();
 
@@ -94,7 +94,7 @@ const calcDate = (dateString: string) => {
   }
 };
 
-const formatDate = (dateString: string) => {
+export const formatDate = (dateString: string) => {
   const date = new Date(dateString.replace(' ', 'T') + ':00');
 
   const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];

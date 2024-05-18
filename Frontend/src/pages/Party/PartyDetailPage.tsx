@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import MemberInfo from './components/MemberInfo';
 import PartyInfo from './components/PartyInfo';
 import PathMap from './components/PathMap';
@@ -14,6 +14,8 @@ import userStore from '@/stores/useUserStore';
 import './partyDetail.css';
 
 const PartyDetailPage = () => {
+  const location = useLocation();
+  const { from } = (location.state as { from: string }) || {};
   const { client, isConnected } = useWebSocket();
   const { id } = userStore();
   const { partyId } = useParams();
@@ -204,6 +206,7 @@ const PartyDetailPage = () => {
         currentParticipants={info.currentParticipants}
         expectedCost={info.expectedCost}
         fetchData={fetchData}
+        from={from}
       />
 
       <div className='party-info flex justify-between p-4 mt-14'>

@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useWebSocket } from '@/context/webSocketProvider';
 import userStore from '@/stores/useUserStore';
 import { getCookie } from '@/utils/CookieUtil';
+
 interface ModalProps {
   isVisible: boolean;
   role: string;
@@ -25,6 +26,7 @@ interface INavProps {
   roomId: string;
   expectedCost: number;
   currentParticipants: number;
+  from: string | undefined;
 }
 
 const Modal: React.FC<ModalProps & { fetchData: () => void }> = ({
@@ -143,6 +145,7 @@ const TopNav: React.FC<INavProps & { fetchData: () => void }> = ({
   expectedCost,
   currentParticipants,
   fetchData,
+  from,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const nav = useNavigate();
@@ -153,6 +156,10 @@ const TopNav: React.FC<INavProps & { fetchData: () => void }> = ({
   }, [modalVisible]);
 
   const goHome = () => {
+    if (from === '/profile/party/history') {
+      nav('/profile/party/history', { replace: true });
+      return;
+    }
     nav('/home');
   };
 

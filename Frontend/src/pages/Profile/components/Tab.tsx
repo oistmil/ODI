@@ -42,7 +42,7 @@ export const Tabs: React.FC<TabsProps> = ({ children, useStore }) => {
 
   return (
     <div>
-      <ul className='w-[100%] flex justify-center'>
+      <ul className='w-[100%] h-[95%] flex justify-center'>
         {React.Children.map(children, child => (
           <li
             key={child.props.value}
