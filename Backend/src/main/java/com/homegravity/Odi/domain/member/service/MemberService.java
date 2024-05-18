@@ -50,8 +50,8 @@ public class MemberService {
     }
 
     //사용자 정보 수정
-    public MemberResponseDTO updateMemberInfo(MemberUpdateRequestDTO memberUpdateRequestDTO, MultipartFile newImage, Member member) {
-        if (!memberUpdateRequestDTO.getNewNickname().isEmpty()) {
+    public MemberResponseDTO updateMemberInfo(MemberUpdateRequestDTO memberUpdateRequestDTO, Member member) {
+        if (memberUpdateRequestDTO.getNewNickname()!=null) {
             boolean IsExistNickname = memberRepository.existsByNicknameAndDeletedAtIsNull(memberUpdateRequestDTO.getNewNickname());
 
             if (IsExistNickname) {//이미 존재하는 닉네임이면 변경 불가
@@ -62,9 +62,9 @@ public class MemberService {
         }
 
         //이미지를 변경한다면
-        if (newImage!= null) {
+        if (memberUpdateRequestDTO.getNewImage()!=null) {
             String oldImgS3Url = member.getImage();
-            String newImgS3Url = s3Service.saveFile(newImage, S3Folder.PROFILE_IMAGE);
+            String newImgS3Url = s3Service.saveFile(memberUpdateRequestDTO.getNewImage(), S3Folder.PROFILE_IMAGE);
 
             s3Service.deleteFile(oldImgS3Url);
             member.updateImage(newImgS3Url);
