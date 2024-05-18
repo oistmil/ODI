@@ -34,14 +34,13 @@ public class PlaceDocumentNativeQueryRepository {
     // 정렬 기준은 가까우면서 검색어의 유사도가 높은 항목 -> 거리가 멀면서 검색어의 유사도가 높은 항목 -> 유사도가 낮은 항목
     public List<PlaceDocument> searchPlaces(String searchWord, GeoPoint geoPoint, Pageable pageable) {
 
-        // query 검색 대상 필드
-        List<String> searchTargetFields = List.of("major_category^100", "sub_category^100", "road_name_address.analyzed^14", "jibun_address", "place_name^10", "place_name.analyzed^7", "building_name.analyzed^5", "busstop_name.analyzed", "bus_stop_num");
 
         // multi match query
-        MultiMatchQuery multiMatchQuery = MultiMatchQuery.of(mmq -> mmq.query(searchWord).fields(searchTargetFields).type(TextQueryType.Phrase));
+        MultiMatchQuery multiMatchPhrase = MultiMatchQuery.of(mmq -> mmq.query(searchWord).fields(List.of("major_category^100", "sub_category^100", "road_name_address.analyzed^14", "jibun_address", "place_name^10", "place_name.analyzed^7", "building_name.analyzed^5", "busstop_name.analyzed", "bus_stop_num")).type(TextQueryType.Phrase));
+        MultiMatchQuery multiMatchBestFields = MultiMatchQuery.of(mmq -> mmq.query(searchWord).fields(List.of("place_name.analyzed", "busstop_name.analyzed^0.01")).type(TextQueryType.BestFields));
 
         // 위치 (geoPoint로 부터 10Km 떨어진 값은 decay만큼 감쇠)
-        DecayPlacement decayPlacement = DecayPlacement.of(dp -> dp.scale(JsonData.of("500km")).offset(JsonData.of("0km")).decay(0.1).origin(JsonData.of(geoPoint)));
+        DecayPlacement decayPlacement = DecayPlacement.of(dp -> dp.scale(JsonData.of("500km")).offset(JsonData.of("1km")).decay(0.01).origin(JsonData.of(geoPoint)));
 
         // Decay function
         DecayFunction decayFunction = DecayFunction.of(df -> df.field("location-geopoint").placement(decayPlacement));
@@ -51,11 +50,15 @@ public class PlaceDocumentNativeQueryRepository {
                 .params("query_content", JsonData.of(searchWord)));
         ScriptScoreFunction scriptScoreFunction = ScriptScoreFunction.of(ssf -> ssf.script(s -> s.inline(script)));
 
+        // phrase 검색 결과 없을 시 best_fields 사용
+        BoolQuery boolQuery = BoolQuery.of(bq -> bq.should(multiMatchPhrase._toQuery(), multiMatchBestFields._toQuery()).minimumShouldMatch("1"));
+
+
         // 검색어의 유사도 * 거리 (decay 함수 사용)
         Query query = NativeQuery.builder()
                 .withQuery(QueryBuilders.functionScore(fs -> fs
-                                .query(fsq -> fsq.multiMatch(multiMatchQuery))
-                                .functions(f -> f.gauss(decayFunction))
+                                .query(fsq -> fsq.bool(boolQuery))
+                                .functions(f -> f.linear(decayFunction))
                                 .functions(f -> f.scriptScore(scriptScoreFunction))
                                 .scoreMode(FunctionScoreMode.Multiply)
                                 .boostMode(FunctionBoostMode.Multiply)
