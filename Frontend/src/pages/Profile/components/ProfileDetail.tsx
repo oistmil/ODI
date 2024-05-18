@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import userStore from '@/stores/useUserStore';
 import { useNavigate } from 'react-router-dom';
 import SvgGoBack from '@/assets/svg/SvgGoBack';
@@ -61,9 +61,18 @@ const ProfileDetail: React.FC = () => {
       if (newNickname !== user.nickname) {
         formData.append('newNickname', newNickname as string);
       }
-      if (previewImage) {
+      if (previewImage !== user.image) {
         formData.append('newImage', imgFile as File);
       }
+
+      if (newNickname === user.nickname && previewImage === user.image) {
+        toast.error('변경된 정보가 없습니다.');
+        return;
+      }
+
+      // for (let pair of formData.entries()) {
+      //   console.log(pair[0] + ', ' + pair[1]);
+      // }
 
       const response = await axios.put(`${ViteConfig.VITE_BASE_URL}/api/members/me`, formData, {
         headers: {
