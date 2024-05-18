@@ -36,7 +36,7 @@ public class PlaceDocumentNativeQueryRepository {
 
 
         // multi match query
-        MultiMatchQuery multiMatchPhrase = MultiMatchQuery.of(mmq -> mmq.query(searchWord).fields(List.of("major_category^100", "sub_category^100", "road_name_address.analyzed^14", "jibun_address", "place_name^10", "place_name.analyzed^7", "building_name.analyzed^5", "busstop_name.analyzed", "bus_stop_num")).type(TextQueryType.Phrase));
+        MultiMatchQuery multiMatchPhrase = MultiMatchQuery.of(mmq -> mmq.query(searchWord).fields(List.of("major_category^100", "sub_category^100", "road_name_address.analyzed^3", "place_name^10", "place_name.analyzed^7", "building_name.analyzed", "busstop_name.analyzed", "bus_stop_num")).type(TextQueryType.Phrase));
         MultiMatchQuery multiMatchBestFields = MultiMatchQuery.of(mmq -> mmq.query(searchWord).fields(List.of("place_name.analyzed", "busstop_name.analyzed^0.01")).type(TextQueryType.BestFields));
 
         // 위치 (geoPoint로 부터 10Km 떨어진 값은 decay만큼 감쇠)
