@@ -146,7 +146,7 @@ const MemberInfo: React.FC<IMemberInfoProps & { fetchData: () => void }> = ({
                 className={`badge text-white ${person.gender === 'M' ? 'bg-blue-500' : 'bg-red-500'}`}>
                 {person.gender === 'M' ? '남' : '여'}
               </div>
-              <div className='badge bg-purple-400'>{person.ageGroup}</div>
+              <div className='badge bg-purple-400 text-white'>{person.ageGroup}</div>
             </div>
           </div>
         </div>
@@ -160,24 +160,24 @@ const MemberInfo: React.FC<IMemberInfoProps & { fetchData: () => void }> = ({
               max='100'></progress>
           </div>
         </div>
-        <div className='content-center'>
-          {role === 'ORGANIZER' && ( // role이 'ORGANIZER'일 때만 버튼 렌더링
-            <div className='content-center w-10 h-10'>
+        {role === 'ORGANIZER' && ( // role이 'ORGANIZER'일 때만 버튼 렌더링
+          <div className='content-center'>
+            <div className='content-center'>
               <button
                 onClick={banParticipant(person.id, person.nickname)}
-                className='rounded bg-red-500 text-white content-center text-center'>
-                추방
+                className='content-center w-16 h-10 rounded bg-red-500 text-white'>
+                <p className='content-center text-center'>추방하기</p>
               </button>
             </div>
-          )}
-        </div>
-        <div className='content-center'>
-          {person.id === userId && (
-            <div className='content-center rounded-full w-10 h-10 bg-blue-100'>
+          </div>
+        )}
+        {person.id === userId && (
+          <div className='content-center'>
+            <div className='content-center rounded-full w-10 h-10 bg-purple-100'>
               <p className='content-center text-center '>나</p>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </li>
     ));
 
@@ -237,17 +237,24 @@ const MemberInfo: React.FC<IMemberInfoProps & { fetchData: () => void }> = ({
         </div>
 
         <div className='card card-side'>
-          <figure className='w-1/2'>
+          <figure className='w-1/3'>
             <img className='' src={hostImgUrl} alt='hostImg' />
           </figure>
-          <div className='card-body'>
+          <div className='card-body p-4'>
             <h2 className='card-title'>{hostName}</h2>
-            <p>{hostGender === 'M' ? '남' : '여'}</p>
-            <p>{hostAge}</p>
-            <div className='card-actions h-12 justify-end'>
+            <div className='flex gap-x-2'>
+              <div
+                className={`badge text-white ${hostGender === 'M' ? 'bg-blue-500' : 'bg-red-500'}`}>
+                {hostGender === 'M' ? '남' : '여'}
+              </div>
+              <div className='badge bg-purple-400 text-white'>{hostAge}</div>
+            </div>
+            <div className='justify-end'>
               <div className='w-full'>
-                <p className='text-xl font-bold'>당도</p>
-                <p className='font-bold'>{hostBrix.toFixed(1)}° Bx</p>
+                <p className='text-xl font-bold'>
+                  당도 <span className='text-lg'>{hostBrix.toFixed(1)}° Bx</span>
+                </p>
+
                 <div className='w-full'>
                   <progress
                     className='progress progress-error w-full bg-purple-100'

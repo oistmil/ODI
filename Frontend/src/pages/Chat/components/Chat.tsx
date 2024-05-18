@@ -22,6 +22,7 @@ const Chat: React.FC<ChatProps> = ({ roomId, me, fetchData }) => {
   const { partyId } = useParams();
   const { client, isConnected } = useWebSocket();
   const [messages, setMessages] = useState<IMessage[]>([]);
+  const [loading, setLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -36,6 +37,7 @@ const Chat: React.FC<ChatProps> = ({ roomId, me, fetchData }) => {
       const res = await jwtAxios.get(`api/chat/room/${roomId}`);
       const beforeChat = res.data.chatMessages;
       setMessages(prevMessages => [...prevMessages, ...beforeChat]);
+      setLoading(false); // 메시지 불러오기가 끝난 후 로딩 상태를 false로 설정
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
@@ -48,7 +50,11 @@ const Chat: React.FC<ChatProps> = ({ roomId, me, fetchData }) => {
         `/sub/chat/room/${roomId}`,
         message => {
           const newMessage = JSON.parse(message.body);
-          if (['SETTLEMENT', 'ENTER', 'QUIT', 'CONFIRM'].includes(newMessage.type)) {
+          if (
+            ['SETTLEMENT_REQUEST', 'SETTLEMENT_SUCCESS', 'ENTER', 'QUIT', 'CONFIRM'].includes(
+              newMessage.type,
+            )
+          ) {
             fetchData();
           }
 
@@ -129,54 +135,62 @@ const Chat: React.FC<ChatProps> = ({ roomId, me, fetchData }) => {
 
   return (
     <div className='flex flex-col h-full'>
-      <div className='flex-grow overflow-y-auto mt-20 mb-12 p-4'>
-        {messages.map((msg, index) => {
-          const prevMsg = messages[index - 1];
-          const nextMsg = messages[index + 1];
-          const showImage =
-            !prevMsg ||
-            prevMsg.senderNickname !== msg.senderNickname ||
-            prevMsg?.type !== 'TALK' ||
-            isDifferentTime(prevMsg.sendTime, msg.sendTime);
-          const showTime =
-            !nextMsg ||
-            nextMsg.senderNickname !== msg.senderNickname ||
-            nextMsg?.type !== 'TALK' ||
-            isDifferentTime(msg.sendTime, nextMsg.sendTime);
+      {loading ? (
+        <div className='flex justify-center items-center h-full'>
+          <span>Loading...</span>
+        </div>
+      ) : (
+        <>
+          <div className='flex-grow overflow-y-auto mt-20 mb-12 p-4'>
+            {messages.map((msg, index) => {
+              const prevMsg = messages[index - 1];
+              const nextMsg = messages[index + 1];
+              const showImage =
+                !prevMsg ||
+                prevMsg.senderNickname !== msg.senderNickname ||
+                prevMsg?.type !== 'TALK' ||
+                isDifferentTime(prevMsg.sendTime, msg.sendTime);
+              const showTime =
+                !nextMsg ||
+                nextMsg.senderNickname !== msg.senderNickname ||
+                nextMsg?.type !== 'TALK' ||
+                isDifferentTime(msg.sendTime, nextMsg.sendTime);
 
-          return msg.type === 'TALK' ? (
-            <ChatMessage
-              key={index}
-              msg={msg}
-              isOwnMessage={msg.senderNickname === me.nickname}
-              showImage={showImage}
-              showTime={showTime}
+              return msg.type === 'TALK' ? (
+                <ChatMessage
+                  key={index}
+                  msg={msg}
+                  isOwnMessage={msg.senderNickname === me.nickname}
+                  showImage={showImage}
+                  showTime={showTime}
+                />
+              ) : (
+                <div key={index} className='flex justify-center my-4'>
+                  <span className='badge badge-lg'>{msg.content}</span>
+                </div>
+              );
+            })}
+            <div ref={messagesEndRef} />
+          </div>
+
+          <div className='fixed bottom-0 bg-white flex w-screen'>
+            <input
+              type='text'
+              ref={inputRef}
+              onKeyPress={e => {
+                if (e.key === 'Enter') {
+                  handleSendMessage();
+                }
+              }}
+              placeholder='메세지를 입력하세요'
+              className='input flex-grow mr-2'
             />
-          ) : (
-            <div key={index} className='flex justify-center my-4'>
-              <span className='badge badge-lg'>{msg.content}</span>
-            </div>
-          );
-        })}
-        <div ref={messagesEndRef} />
-      </div>
-
-      <div className='fixed bottom-0 bg-white flex w-screen'>
-        <input
-          type='text'
-          ref={inputRef}
-          onKeyPress={e => {
-            if (e.key === 'Enter') {
-              handleSendMessage();
-            }
-          }}
-          placeholder='메세지를 입력하세요'
-          className='input flex-grow mr-2'
-        />
-        <button className='btn' onClick={handleSendMessage}>
-          전송
-        </button>
-      </div>
+            <button className='btn' onClick={handleSendMessage}>
+              전송
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };

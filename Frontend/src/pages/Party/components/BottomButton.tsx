@@ -102,7 +102,7 @@ const Button: React.FC<IButtonProps & { fetchData: () => void }> = ({
       .then(res => {
         console.log(res.data);
         if (res.data.status === 201) {
-          toast(<RequestDisplay />, { autoClose: false });
+          toast(<RequestDisplay />);
           handleSendAlarm('APPLY');
         }
         fetchData();
@@ -135,47 +135,6 @@ const Button: React.FC<IButtonProps & { fetchData: () => void }> = ({
       });
   }
 
-  const successParty = () => {
-    jwtAxios
-      .post(
-        `/api/parties/${partyId}/success`,
-        {},
-        {
-          params: {
-            expected_cost: expectedCost,
-          },
-        },
-      )
-      .then(res => {
-        console.log(res.data);
-        if (res.data.status === 204) {
-          toast.success(`${res.data.message} 선 차감된 금액:`, {
-            position: 'top-center',
-          });
-          if (client && client.connected) {
-            client.publish({
-              destination: `/pub/chat/message`,
-              body: JSON.stringify({
-                partyId,
-                roomId,
-                type: 'TALK',
-              }),
-              headers: {
-                token: `${getCookie('Authorization')}`,
-              },
-            });
-          }
-        }
-        fetchData();
-      })
-      .catch(err => {
-        console.error(err);
-        toast.error(`${err.response.data.message} ${err.response.data.reason}`, {
-          position: 'top-center',
-        });
-      });
-  };
-
   // 채팅방으로 routing
   function GoChat() {
     nav(`/party/chat/${partyId}`);
@@ -189,13 +148,8 @@ const Button: React.FC<IButtonProps & { fetchData: () => void }> = ({
         <div>
           <button
             onClick={GoChat}
-            className='btn w-1/2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4'>
+            className='btn w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4'>
             <p>팟 채팅</p>
-          </button>
-          <button
-            onClick={successParty}
-            className='btn w-1/2 bg-purple-400 hover:bg-purlple-700 text-purple font-bold py-2 px-4'>
-            <p>팟 확정하기</p>
           </button>
         </div>
       );

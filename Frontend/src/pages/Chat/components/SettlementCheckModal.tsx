@@ -211,7 +211,7 @@ const SettlementCheckModal: React.FC<SettlementCheckModalProps> = ({
               {settle >= 0 ? (
                 <p>추가로 내야할 금액 : {settle}</p>
               ) : (
-                <p>돌려 받을 금액 : {settle}</p>
+                <p>돌려 받을 금액 : {settle * -1}</p>
               )}
             </div>
           </div>

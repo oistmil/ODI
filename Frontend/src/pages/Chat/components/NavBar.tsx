@@ -26,6 +26,8 @@ interface INavBarProps {
   currentParticipants: number;
   taxifare: number;
   fetchData: () => void;
+  sendAlarmToParticipants: (type: string) => Promise<void>;
+  sendAlarmToOrganizer: (type: string) => Promise<void>;
 }
 
 interface IScores {
@@ -46,6 +48,8 @@ const NavBar: React.FC<INavBarProps> = ({
   currentParticipants,
   taxifare,
   fetchData,
+  sendAlarmToParticipants,
+  sendAlarmToOrganizer,
 }) => {
   const { partyId } = useParams();
   const navigate = useNavigate();
@@ -69,14 +73,14 @@ const NavBar: React.FC<INavBarProps> = ({
 
   let stateComponent = stateComponents[state as keyof typeof stateComponents];
 
-  function sendSettlementMessage() {
+  function sendChatAlarmMessage(type: string) {
     if (client && client.connected) {
       client.publish({
         destination: `/pub/chat/message`,
         body: JSON.stringify({
           partyId: partyId,
           roomId: roomId,
-          type: 'SETTLEMENT_REQUEST',
+          type,
         }),
         headers: {
           token: `${getCookie('Authorization')}`,
@@ -168,7 +172,11 @@ const NavBar: React.FC<INavBarProps> = ({
             hideProgressBar: true,
             closeOnClick: true,
           });
-          sendSettlementMessage();
+          sendChatAlarmMessage('SETTLEMENT_REQUEST');
+          sendAlarmToParticipants('SETTLEMENT_REQUEST');
+          if (me.role !== 'ORGANIZER') {
+            sendAlarmToOrganizer('SETTLEMENT_REQUEST');
+          }
           fetchData();
           toggleModal();
         }
@@ -191,18 +199,10 @@ const NavBar: React.FC<INavBarProps> = ({
         if (res.data.status === 204) {
           toast.success('정산을 완료했습니다');
           fetchData();
-          if (client && client.connected) {
-            client.publish({
-              destination: `/pub/chat/message`,
-              body: JSON.stringify({
-                partyId,
-                roomId,
-                type: 'SETTLEMENT_SUCCESS',
-              }),
-              headers: {
-                token: `${getCookie('Authorization')}`,
-              },
-            });
+          sendChatAlarmMessage('SETTLEMENT_SUCCESS');
+          sendAlarmToParticipants('SETTLEMENT_SUCCESS');
+          if (me.role !== 'ORGANIZER') {
+            sendAlarmToOrganizer('SETTLEMENT_SUCCESS');
           }
         }
       })
@@ -241,19 +241,8 @@ const NavBar: React.FC<INavBarProps> = ({
               position: 'top-center',
             },
           );
-          if (client && client.connected) {
-            client.publish({
-              destination: `/pub/chat/message`,
-              body: JSON.stringify({
-                partyId,
-                roomId,
-                type: 'CONFIRM',
-              }),
-              headers: {
-                token: `${getCookie('Authorization')}`,
-              },
-            });
-          }
+          sendChatAlarmMessage('CONFIRM');
+          sendAlarmToParticipants('CONFIRM');
         }
         fetchData();
       })

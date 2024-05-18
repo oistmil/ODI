@@ -5,6 +5,7 @@ import { getCookie } from '@/utils/CookieUtil';
 import NavBar from './components/NavBar';
 import Chat from './components/Chat';
 import { IChatInfo } from '@/types/Chat';
+import { useWebSocket } from '@/context/webSocketProvider';
 
 const ChatPage = () => {
   const { partyId } = useParams();
@@ -13,10 +14,63 @@ const ChatPage = () => {
   const [error, setError] = useState('');
   const [taxifare, setTaxifare] = useState(0);
   const navigate = useNavigate();
-
+  const { client, isConnected } = useWebSocket();
   function goBack() {
     navigate(`/home`);
   }
+
+  const sendAlarmToParticipants = async (type: string) => {
+    try {
+      if (info && client && client.connected) {
+        info.participants.forEach(participant => {
+          client.publish({
+            destination: `/pub/notification/${participant.id}`,
+            body: JSON.stringify({
+              partyId,
+              roomId: info.roomId,
+              type,
+            }),
+            headers: {
+              token: `${getCookie('Authorization')}`,
+            },
+          });
+        });
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error(err);
+        setError(err.message);
+      } else {
+        console.error('Unexpected error', err);
+        setError('Unexpected error occurred');
+      }
+    }
+  };
+  const sendAlarmToOrganizer = async (type: string) => {
+    try {
+      if (info && client && client.connected) {
+        client.publish({
+          destination: `/pub/notification/${info.organizer.id}`,
+          body: JSON.stringify({
+            partyId,
+            roomId: info.roomId,
+            type,
+          }),
+          headers: {
+            token: `${getCookie('Authorization')}`,
+          },
+        });
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error(err);
+        setError(err.message);
+      } else {
+        console.error('Unexpected error', err);
+        setError('Unexpected error occurred');
+      }
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -116,12 +170,14 @@ const ChatPage = () => {
             currentParticipants={info.currentParticipants}
             taxifare={taxifare}
             fetchData={fetchData}
+            sendAlarmToParticipants={sendAlarmToParticipants}
+            sendAlarmToOrganizer={sendAlarmToOrganizer}
           />
         </div>
       )}
 
       <div className='flex-grow pt-24 overflow-hidden'>
-        <div className='divider p-4'></div>
+        <div className='divider p-5'></div>
         {info && <Chat roomId={info.roomId} me={info.me} fetchData={fetchData} />}
       </div>
     </div>
