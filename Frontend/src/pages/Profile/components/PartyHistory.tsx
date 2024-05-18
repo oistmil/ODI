@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 import SvgGoBack from '@/assets/svg/SvgGoBack';
 import { Tabs, Tab } from '@/pages/Profile/components/Tab';
 import partyHistoryStore from '@/stores/usePartyHistoryStore';
@@ -27,17 +26,17 @@ const PartyHistory = () => {
       <Tabs useStore={partyHistoryStore}>
         <Tab label='전체 내역' value='all'>
           {parties.map((party: any) => (
-            <div>{party.title}</div>
+            <div key={party.createAt}>{party.title}</div>
           ))}
         </Tab>
         <Tab label='만든 파티' value='organizer'>
           {parties.map((party: any) => (
-            <div>{party.title}</div>
+            <div key={party.createAt}>{party.title}</div>
           ))}
         </Tab>
         <Tab label='참여한 파티' value='other'>
           {parties.map((party: any) => (
-            <div>{party.title}</div>
+            <div key={party.createAt}>{party.title}</div>
           ))}
         </Tab>
       </Tabs>
