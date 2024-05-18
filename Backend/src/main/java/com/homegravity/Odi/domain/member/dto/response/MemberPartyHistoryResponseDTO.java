@@ -68,9 +68,9 @@ public class MemberPartyHistoryResponseDTO {
     @Schema(description = "파티맴버 리스트(파티장 정보 포함)")
     private List<PartyMemberDTO> partyMemberDTOList;
 
-
     @Builder
-    private MemberPartyHistoryResponseDTO(CategoryType category, GenderType genderRestriction, LocalDateTime createAt, LocalDateTime modifiedAt, String title, String departuresName, LocationPoint departuresLocation, String arrivalsName, LocationPoint arrivalsLocation, LocalDateTime departuresDate, Integer maxParticipants, Integer currentParticipants, StateType state, PartyMemberDTO organizer, List<PartyMemberDTO> partyMemberDTOList) {
+    private MemberPartyHistoryResponseDTO(Long id, CategoryType category, GenderType genderRestriction, LocalDateTime createAt, LocalDateTime modifiedAt, String title, String departuresName, LocationPoint departuresLocation, String arrivalsName, LocationPoint arrivalsLocation, LocalDateTime departuresDate, Integer maxParticipants, Integer currentParticipants, StateType state, PartyMemberDTO organizer, List<PartyMemberDTO> partyMemberDTOList) {
+        this.id = id;
         this.category = category;
         this.genderRestriction = genderRestriction;
         this.createAt = createAt;
@@ -93,6 +93,7 @@ public class MemberPartyHistoryResponseDTO {
         LocationPoint arrivalsLocation = LocationPoint.of(party.getArrivalsLocation().getX(), party.getArrivalsLocation().getY());
 
         return builder()
+                .id(party.getId())
                 .category(party.getCategory())
                 .genderRestriction(party.getGenderRestriction())
                 .createAt(party.getCreatedAt())
