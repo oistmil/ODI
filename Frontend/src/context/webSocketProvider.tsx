@@ -3,7 +3,6 @@ import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import { getCookie } from '@/utils/CookieUtil';
 import { ViteConfig } from '@/apis/ViteConfig';
-import axios from 'axios';
 import userStore from '@/stores/useUserStore';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';

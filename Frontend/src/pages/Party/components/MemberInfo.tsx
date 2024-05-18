@@ -139,13 +139,18 @@ const MemberInfo: React.FC<IMemberInfoProps & { fetchData: () => void }> = ({
       <li className='flex justify-between my-4' key={person.id}>
         <div className='flex gap-x-2 items-center'>
           <img className='rounded-full w-10 h-10' src={person.profileImage} alt='' />
-          <div className='ml-4 font-bold flex gap-x-2'>
+          <div className='mx-4 font-bold flex flex-col gap-x-2'>
             <p>{person.nickname}</p>
-            <p>{person.gender === 'M' ? '남' : '여'}</p>
-            <p>{person.ageGroup}</p>
+            <div className='flex gap-x-1'>
+              <div
+                className={`badge text-white ${person.gender === 'M' ? 'bg-blue-500' : 'bg-red-500'}`}>
+                {person.gender === 'M' ? '남' : '여'}
+              </div>
+              <div className='badge bg-purple-400'>{person.ageGroup}</div>
+            </div>
           </div>
         </div>
-        <div className='w-max ml-10'>
+        <div className='w-max'>
           <p className='text-xl font-bold'>당도</p>
           <p className='font-bold'>{person.brix.toFixed(1)}° Bx</p>
           <div className='w-full'>
@@ -155,18 +160,20 @@ const MemberInfo: React.FC<IMemberInfoProps & { fetchData: () => void }> = ({
               max='100'></progress>
           </div>
         </div>
-        <div className='flex items-center ml-10'>
+        <div className='content-center'>
           {role === 'ORGANIZER' && ( // role이 'ORGANIZER'일 때만 버튼 렌더링
-            <button
-              onClick={banParticipant(person.id, person.nickname)}
-              className='btn btn-error btn-square rounded bg-red-500 text-white'>
-              추방
-            </button>
+            <div className='content-center w-10 h-10'>
+              <button
+                onClick={banParticipant(person.id, person.nickname)}
+                className='rounded bg-red-500 text-white content-center text-center'>
+                추방
+              </button>
+            </div>
           )}
         </div>
         <div className='content-center'>
           {person.id === userId && (
-            <div className='content-center  rounded-full w-10 h-10 bg-blue-100'>
+            <div className='content-center rounded-full w-10 h-10 bg-blue-100'>
               <p className='content-center text-center '>나</p>
             </div>
           )}
@@ -179,12 +186,15 @@ const MemberInfo: React.FC<IMemberInfoProps & { fetchData: () => void }> = ({
     <li className='flex justify-between my-2' key={applicant.id}>
       <div className='user-profile flex gap-x-4 items-center'>
         <img src={applicant.profileImage} alt='user-img' className='rounded-full w-10 h-10' />
-        <div className='ml-4 font-bold'>
-          <div>
-            {applicant.nickname} {applicant.ageGroup}
+        <div className=' font-bold'>
+          <div>{applicant.nickname}</div>
+          <div className='flex'>
+            <div
+              className={`badge text-white ${applicant.gender === 'M' ? 'bg-blue-500' : 'bg-red-500'}`}>
+              {applicant.gender === 'M' ? '남' : '여'}
+            </div>
+            <div className='badge bg-'>{applicant.ageGroup}</div>
           </div>
-          <div>{applicant.gender === 'M' ? '남' : '여'}</div>
-          <div>{applicant.ageGroup}</div>
         </div>
       </div>
       <div className='w-max'>

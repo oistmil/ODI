@@ -8,10 +8,9 @@ interface IStateBadge {
 const StateBadge: React.FC<IStateBadge> = ({ state, category }) => {
   if (category === 'MATCHING') {
     return (
-      <div className={`py-3 badge flex justify-center rounded bg-blue-100 text-blue-500 font-bold`}>
-        <div className='flex text-center'>
-          <p>자동매칭</p>
-        </div>
+      <div
+        className={`badge w-20 h- flex justify-center rounded bg-blue-100 text-blue-500 font-bold`}>
+        <p className='text-center'>자동매칭</p>
       </div>
     );
   }

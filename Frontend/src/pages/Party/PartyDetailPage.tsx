@@ -209,13 +209,13 @@ const PartyDetailPage = () => {
         from={from}
       />
 
-      <div className='party-info flex justify-between p-4 mt-14'>
+      <div className='party-info justify-between p-4 mt-14'>
+        <StateBadge state={info.state} category={info.category} />
         <p className='font-bold text-xl'>
           {info.category === 'MATCHING'
             ? `매칭시간 : ${formatDate(info.createAt)}`
             : formatDate(info.departuresDate)}
         </p>
-        <StateBadge state={info.state} category={info.category} />
       </div>
       <div className='divider m-0'></div>
       {/* <p>{formatTimeDifference(info.createAt)}</p>

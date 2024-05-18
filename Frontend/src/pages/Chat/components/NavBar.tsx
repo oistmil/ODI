@@ -76,8 +76,7 @@ const NavBar: React.FC<INavBarProps> = ({
         body: JSON.stringify({
           partyId: partyId,
           roomId: roomId,
-          content: `${me.nickname} 님이 정산 요청을 보냈어요!`,
-          type: 'SETTLEMENT',
+          type: 'SETTLEMENT_REQUEST',
         }),
         headers: {
           token: `${getCookie('Authorization')}`,
@@ -192,6 +191,19 @@ const NavBar: React.FC<INavBarProps> = ({
         if (res.data.status === 204) {
           toast.success('정산을 완료했습니다');
           fetchData();
+          if (client && client.connected) {
+            client.publish({
+              destination: `/pub/chat/message`,
+              body: JSON.stringify({
+                partyId,
+                roomId,
+                type: 'SETTLEMENT_SUCCESS',
+              }),
+              headers: {
+                token: `${getCookie('Authorization')}`,
+              },
+            });
+          }
         }
       })
       .then(() => {
@@ -410,9 +422,11 @@ const NavBar: React.FC<INavBarProps> = ({
         <button onClick={goBack} className='btn btn-ghost btn-circle text-3xl'>
           {'<'}
         </button>
-        <p onClick={goParty} className='font-bold text-2xl flex-grow text-center'>
-          {title}
-        </p>
+        <div
+          onClick={goParty}
+          className='font-bold text-2xl text-center content-center items-center align-center'>
+          <p>{title}</p>
+        </div>
         <button onClick={goDetail} className='btn btn-square btn-ghost'>
           <svg
             xmlns='http://www.w3.org/2000/svg'

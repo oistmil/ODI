@@ -161,7 +161,7 @@ const Chat: React.FC<ChatProps> = ({ roomId, me, fetchData }) => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className='fixed bottom-0 bg-white flex w-full p-2'>
+      <div className='fixed bottom-0 bg-white flex w-screen'>
         <input
           type='text'
           ref={inputRef}
