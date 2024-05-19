@@ -84,7 +84,7 @@ const MapRef = () => {
           map: map,
           path: pathList,
           geodesic: true,
-          strokeColor: '#00FF00',
+          strokeColor: '#2196F3',
           strokeOpacity: 1.0,
           strokeWeight: 4,
         });

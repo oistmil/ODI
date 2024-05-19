@@ -30,7 +30,7 @@ export const Tabs: React.FC<TabsProps> = ({ children, useStore }) => {
 
   const getPartyHistory = async () => {
     const response = await jwtAxios(
-      `api/members/me/party?range=${range}&page=0&size=10&sort=createAt,${sort}`,
+      `api/members/me/party?range=${range}&page=0&size=30&sort=createAt,${sort}`,
     );
     console.log(response.data.data.content);
     setParties(response.data.data.content);

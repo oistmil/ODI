@@ -25,6 +25,19 @@ import { ViteConfig } from '@/apis/ViteConfig';
 import { categoryIcons } from '@/constants/constants';
 import { useMatchSocket } from '@/context/matchSocketProvider';
 import { IParty } from '@/types/Party';
+import {
+  categoryList,
+  categoryColorList,
+  genderRestrictionList,
+  partyStateList,
+  stateColorList,
+  calcDate,
+  formatDate,
+} from '@/components/BottomSheet/BottomSheetContent';
+import SvgRouteIcon from '@/assets/svg/SvgRouteIcon';
+import SvgTimerIcon from '@/assets/svg/SvgTimerIcon';
+import SvgParticipantsIcon from '@/assets/svg/SvgParticipantsIcon';
+import PartyItemMap from './PartyItemMap';
 
 interface IAutoMatchData {
   depName?: string;
@@ -63,6 +76,8 @@ const MapRef = () => {
   const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
   const { matchClient, isMatchConnected, disconnectMatch } = useMatchSocket();
   const [partyData, setPartyData] = useState<IParty[]>([]);
+  const [detailParty, setDetailParty] = useState<IParty | null>(null);
+  const partyDetailModalRef = useRef<HTMLDialogElement>(null);
   const [progress, setProgress] = useState(100);
   const { id } = userStore();
   const [reqAutoMatchData, setReqAutoMatchData] = useState<IAutoMatchData>({
@@ -440,6 +455,10 @@ const MapRef = () => {
 
       marker.addListener('click', () => {
         console.log(item);
+        setDetailParty(item);
+        if (partyDetailModalRef.current) {
+          partyDetailModalRef.current.showModal();
+        }
       });
 
       return marker;
@@ -599,6 +618,83 @@ const MapRef = () => {
     </>
   );
 
+  let markerDetail = (
+    <>
+      {detailParty && (
+        <dialog
+          ref={partyDetailModalRef}
+          id='my_modal_4'
+          className={`modal ${isOpen ? 'open' : 'close'}`}>
+          <div className='modal-box w-11/12 h-[80%] bg-white flex flex-col'>
+            <h3 className='font-bold text-black text-[20px]'>{detailParty.title}</h3>
+
+            <div className='mt-1 border border-gray-300'></div>
+            <div className='w-[100%] h-[50%] rounded-xl flex flex-col items-center justify-center overflow-hidden mt-5'>
+              <PartyItemMap
+                departuresLocation={detailParty.departuresLocation}
+                arrivalsLocation={detailParty.arrivalsLocation}
+              />
+            </div>
+            <div className='w-[100%] h-[40%] border rounded-xl mt-5 p-3 cursor-pointer flex flex-col gap-2 justify-center'>
+              <div className='w-[100%] h-[15%] flex items-center gap-3'>
+                <div
+                  className={`py-[2px] px-1 border ${categoryColorList[detailParty.category]} rounded-lg text-[13px] font-semibold`}>
+                  {categoryList[detailParty.category]}
+                </div>
+                <div className='py-[2px] px-1 border border-gray-200 bg-gray-200 rounded-lg text-gray-500 text-[13px] font-semibold'>
+                  {genderRestrictionList[detailParty.genderRestriction]}
+                </div>
+                <div className='py-[2px] px-1 text-gray-500 text-[13px] ml-auto '>
+                  {calcDate(detailParty.departuresDate)}
+                </div>
+              </div>
+              {/* <div className='w-[100%] h-[25%] flex items-center text-[18px] font-bold'>
+                {detailParty.title}
+              </div> */}
+              <div className='w-[100%] h-[15%] flex items-center gap-2 text-gray-500 mt-2'>
+                <SvgRouteIcon />
+                <div>{detailParty.departuresName}</div>
+                <div>{'->'}</div>
+                <div>{detailParty.arrivalsName}</div>
+              </div>
+              <div className='w-[100%] h-[15%] flex items-center gap-2 text-gray-500'>
+                <SvgTimerIcon />
+                <div>{formatDate(detailParty.departuresDate)}</div>
+              </div>
+              <div className='w-[100%] h-[30%] flex items-center gap-4'>
+                <div className='w-[40px] h-[40px] flex items-center rounded-full overflow-hidden'>
+                  <img src={detailParty.organizer.profileImage} alt='파티장 프로필' />
+                </div>
+                <div
+                  className={`py-[2px] px-1 border ${stateColorList[detailParty.state]} rounded-lg text-[13px] font-semibold`}>
+                  {partyStateList[detailParty.state]}
+                </div>
+                <div className='w-[40%] h-[15%] flex justify-end items-center gap-2 text-gray-500 ml-auto mr-4'>
+                  <SvgParticipantsIcon />
+                  <div className='text-[13px]'>{`${detailParty.currentParticipants} / ${detailParty.maxParticipants}`}</div>
+                </div>
+              </div>
+            </div>
+            <div className='modal-action'>
+              <form method='dialog'>
+                <button className='btn btn-sm btn-circle btn-ghost absolute right-5 top-5 text-black'>
+                  ✕
+                </button>
+              </form>
+            </div>
+            <button
+              className='btn w-[100%] bg-OD_PURPLE text-white font-bold text-[18px] border-none'
+              onClick={() => {
+                nav(`/party/${detailParty.id}`);
+              }}>
+              상세 결과 보기
+            </button>
+          </div>
+        </dialog>
+      )}
+    </>
+  );
+
   return (
     <div className='w-[100%] h-[100%]'>
       <div className='fixed w-[100%] h-[5%] bg-black z-10 flex items-center'>
@@ -640,6 +736,7 @@ const MapRef = () => {
         자동 매칭
       </button>
       <BottomSheet />
+      {markerDetail}
     </div>
   );
 };

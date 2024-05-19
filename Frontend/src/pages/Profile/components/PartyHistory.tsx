@@ -106,7 +106,11 @@ const PartyHistory = () => {
                   <div className='py-[2px] px-1 border border-gray-200 bg-gray-200 rounded-lg text-gray-500 text-[13px] font-semibold'>
                     {genderRestrictionList[party.genderRestriction]}
                   </div>
-                  {party.category === 'MATCHING' ? null : (
+                  {party.category === 'MATCHING' ? (
+                    <div className='py-[2px] px-1 text-gray-500 text-[13px] ml-auto '>
+                      {calcDate(party.createAt)}
+                    </div>
+                  ) : (
                     <div className='py-[2px] px-1 text-gray-500 text-[13px] ml-auto '>
                       {calcDate(party.departuresDate)}
                     </div>
@@ -121,7 +125,12 @@ const PartyHistory = () => {
                   <div>{'->'}</div>
                   <div>{party.arrivalsName}</div>
                 </div>
-                {party.category === 'MATCHING' ? null : (
+                {party.category === 'MATCHING' ? (
+                  <div className='w-[100%] h-[15%] flex items-center gap-2 text-gray-500'>
+                    <SvgTimerIcon />
+                    <div>{formatDate(party.createAt)}</div>
+                  </div>
+                ) : (
                   <div className='w-[100%] h-[15%] flex items-center gap-2 text-gray-500'>
                     <SvgTimerIcon />
                     <div>{formatDate(party.departuresDate)}</div>
@@ -168,7 +177,11 @@ const PartyHistory = () => {
                   <div className='py-[2px] px-1 border border-gray-200 bg-gray-200 rounded-lg text-gray-500 text-[13px] font-semibold'>
                     {genderRestrictionList[party.genderRestriction]}
                   </div>
-                  {party.category === 'MATCHING' ? null : (
+                  {party.category === 'MATCHING' ? (
+                    <div className='py-[2px] px-1 text-gray-500 text-[13px] ml-auto '>
+                      {calcDate(party.createAt)}
+                    </div>
+                  ) : (
                     <div className='py-[2px] px-1 text-gray-500 text-[13px] ml-auto '>
                       {calcDate(party.departuresDate)}
                     </div>
@@ -183,7 +196,12 @@ const PartyHistory = () => {
                   <div>{'->'}</div>
                   <div>{party.arrivalsName}</div>
                 </div>
-                {party.category === 'MATCHING' ? null : (
+                {party.category === 'MATCHING' ? (
+                  <div className='w-[100%] h-[15%] flex items-center gap-2 text-gray-500'>
+                    <SvgTimerIcon />
+                    <div>{formatDate(party.createAt)}</div>
+                  </div>
+                ) : (
                   <div className='w-[100%] h-[15%] flex items-center gap-2 text-gray-500'>
                     <SvgTimerIcon />
                     <div>{formatDate(party.departuresDate)}</div>
@@ -226,7 +244,11 @@ const PartyHistory = () => {
                   <div className='py-[2px] px-1 border border-gray-200 bg-gray-200 rounded-lg text-gray-500 text-[13px] font-semibold'>
                     {genderRestrictionList[party.genderRestriction]}
                   </div>
-                  {party.category === 'MATCHING' ? null : (
+                  {party.category === 'MATCHING' ? (
+                    <div className='py-[2px] px-1 text-gray-500 text-[13px] ml-auto '>
+                      {calcDate(party.createAt)}
+                    </div>
+                  ) : (
                     <div className='py-[2px] px-1 text-gray-500 text-[13px] ml-auto '>
                       {calcDate(party.departuresDate)}
                     </div>
@@ -241,7 +263,11 @@ const PartyHistory = () => {
                   <div>{'->'}</div>
                   <div>{party.arrivalsName}</div>
                 </div>
-                {party.category === 'MATCHING' ? null : (
+                {party.category === 'MATCHING' ? (
+                  <div className='py-[2px] px-1 text-gray-500 text-[13px] ml-auto '>
+                    {calcDate(party.createAt)}
+                  </div>
+                ) : (
                   <div className='w-[100%] h-[15%] flex items-center gap-2 text-gray-500'>
                     <SvgTimerIcon />
                     <div>{formatDate(party.departuresDate)}</div>
