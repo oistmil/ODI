@@ -100,7 +100,7 @@ const MapRef = () => {
     setAutoMatchData(data);
     try {
       if (matchClient && matchClient.connected) {
-        console.log(data);
+        // console.log(data);
         matchClient.publish({
           destination: `/pub/match/${id}`,
           body: JSON.stringify(data),
@@ -167,11 +167,11 @@ const MapRef = () => {
     try {
       const res = await jwtAxios.get(`/api/places/place?longitude=${lng}&latitude=${lat}`);
 
-      console.log(res);
-      console.log('장소 이름 : ', res.data.data.placeName);
-      console.log('건물 이름 : ', res.data.data.buildingName);
-      console.log('지번 주소 : ', res.data.data.jibunAddress);
-      console.log('도로명 주소 : ', res.data.data.roadNameAddress);
+      // console.log(res);
+      // console.log('장소 이름 : ', res.data.data.placeName);
+      // console.log('건물 이름 : ', res.data.data.buildingName);
+      // console.log('지번 주소 : ', res.data.data.jibunAddress);
+      // console.log('도로명 주소 : ', res.data.data.roadNameAddress);
       setCurLocAdd(
         res.data.data.roadNameAddress !== null
           ? res.data.data.roadNameAddress
@@ -238,11 +238,11 @@ const MapRef = () => {
       const subscription = matchClient.subscribe(
         `/sub/matchResult/${id}`,
         message => {
-          console.log(JSON.parse(message.body));
+          // console.log(JSON.parse(message.body));
           const newMessage = JSON.parse(message.body);
 
-          console.log('AUTO MATCH MSG TYPE.', newMessage.type);
-          console.log('AUTO MATCH MSG BODY.', newMessage);
+          // console.log('AUTO MATCH MSG TYPE.', newMessage.type);
+          // console.log('AUTO MATCH MSG BODY.', newMessage);
 
           switch (newMessage.type) {
             // switch (newMessage) {
@@ -252,12 +252,12 @@ const MapRef = () => {
                 clearTimeout(timeoutId);
               }
               setIsLoading(false);
-              console.log('받은거를 처리하자!', newMessage);
+              // console.log('받은거를 처리하자!', newMessage);
               break;
             case 'MATCH_NOT_FOUND':
               console.log('MATCH_NOT_FOUND received, 30초 대기 진행 후 DELETE 요청 전송');
               timeoutId = setTimeout(async () => {
-                console.log('Timeout reached, sending delete request');
+                // console.log('Timeout reached, sending delete request');
                 try {
                   const response = await axios.delete(
                     `${ViteConfig.VITE_BASE_URL}/api/matches/${id}`,
@@ -268,7 +268,7 @@ const MapRef = () => {
                     },
                   );
 
-                  console.log('Delete request successful:', response);
+                  // console.log('Delete request successful:', response);
                   setIsLoading(false);
                 } catch (err) {
                   console.error('Match ID DELETE Request failed:', err);
@@ -310,14 +310,14 @@ const MapRef = () => {
       if (map) {
         const lat = map.getCenter()?.lat();
         const lng = map.getCenter()?.lng();
-        console.log('MAP CENTER', lat, lng);
+        // console.log('MAP CENTER', lat, lng);
         try {
           const response = await jwtAxios.get(
             `/api/party-boards?page=0&size=50&sort=distance,desc&isToday=false&departuresDate=&gender=&category=&longitude=${lng}&latitude=${lat}`,
           );
 
           const { content } = response.data.data;
-          console.log('MAP PARTY DATA LIST', content);
+          // console.log('MAP PARTY DATA LIST', content);
           setPartyData(content);
           updateMarkers(content);
         } catch (error) {
@@ -347,7 +347,7 @@ const MapRef = () => {
 
       // Add click listener to log data
       marker.addListener('click', () => {
-        console.log(item);
+        // console.log(item);
         nav(`/party/${item.id}`);
       });
 
@@ -440,7 +440,7 @@ const MapRef = () => {
           <div
             className='flex justify-center items-center px-2'
             onClick={() => {
-              console.log('주소 변경 클릭~!');
+              // console.log('주소 변경 클릭~!');
             }}>
             <div className='border border-slate-500 rounded-full px-2 text-[12px]'>변경</div>
           </div>

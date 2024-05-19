@@ -24,9 +24,9 @@ const PaymentsHistory = () => {
       const { data } = await axios.get(`${ViteConfig.VITE_BASE_URL}/api/point/history`, {
         headers: { AUTHORIZATION: `Bearer ${getCookie('Authorization')}` },
       });
-      console.log(data.data.content);
+      // console.log(data.data.content);
       setHistory(data.data.content);
-      console.log(history);
+      // console.log(history);
     };
     paymentsHistory();
   }, []);

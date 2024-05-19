@@ -100,7 +100,7 @@ const Button: React.FC<IButtonProps & { fetchData: () => void }> = ({
     jwtAxios
       .post(`api/parties/${partyId}`, {})
       .then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         if (res.data.status === 201) {
           toast(<RequestDisplay />);
           handleSendAlarm('APPLY');
@@ -116,7 +116,7 @@ const Button: React.FC<IButtonProps & { fetchData: () => void }> = ({
     jwtAxios
       .delete(`api/parties/${partyId}`)
       .then(res => {
-        console.log(res);
+        // console.log(res);
         if (res.data.status === 204) {
           toast.success(`${res.data.message}`, { position: 'top-center' });
           if (role === 'PARTICIPANT') {

@@ -103,7 +103,7 @@ const PartyDetailPage = () => {
         },
       })
       .then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         const pathInfoObject = JSON.parse(res.data.data.pathInfo);
         const data = pathInfoObject.route.traoptimal[0].summary;
         const path = pathInfoObject.route.traoptimal[0].path;
@@ -139,7 +139,7 @@ const PartyDetailPage = () => {
       const subscription = client.subscribe(
         `/sub/notification/${id}`,
         msg => {
-          console.log(JSON.parse(msg.body));
+          // console.log(JSON.parse(msg.body));
           fetchData();
         },
         {

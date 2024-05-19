@@ -63,7 +63,7 @@ const EvaluationForm: React.FC<IEvaluationFormProps> = ({ person, onNext, initia
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('현재 평가 값:', scores);
+    // console.log('현재 평가 값:', scores);
     onNext(scores);
   };
 

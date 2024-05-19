@@ -94,11 +94,11 @@ const MapRef = () => {
     try {
       const res = await jwtAxios.get(`/api/places/place?longitude=${lng}&latitude=${lat}`);
 
-      console.log(res);
-      console.log('장소 이름 : ', res.data.data.placeName);
-      console.log('건물 이름 : ', res.data.data.buildingName);
-      console.log('지번 주소 : ', res.data.data.jibunAddress);
-      console.log('도로명 주소 : ', res.data.data.roadNameAddress);
+      // console.log(res);
+      // console.log('장소 이름 : ', res.data.data.placeName);
+      // console.log('건물 이름 : ', res.data.data.buildingName);
+      // console.log('지번 주소 : ', res.data.data.jibunAddress);
+      // console.log('도로명 주소 : ', res.data.data.roadNameAddress);
       setArriveName(
         res.data.data.placeName === null
           ? res.data.data.buildingName === null
@@ -133,11 +133,11 @@ const MapRef = () => {
     }
   };
 
-  if (from === '/home') {
-    console.log(arrName, arrLoc);
-  } else {
-    console.log(arrivalsName, arrivalsLocation);
-  }
+  // if (from === '/home') {
+  //   console.log(arrName, arrLoc);
+  // } else {
+  //   console.log(arrivalsName, arrivalsLocation);
+  // }
 
   useEffect(() => {
     if (ref.current) {
@@ -185,7 +185,7 @@ const MapRef = () => {
 
       markerInstance.addListener('dragend', () => {
         const markerCurPos = markerInstance.getPosition();
-        console.log(markerCurPos?.lat(), markerCurPos?.lng());
+        // console.log(markerCurPos?.lat(), markerCurPos?.lng());
 
         markerInstance.setAnimation(null);
         getAddByLatLng(markerCurPos!.lat(), markerCurPos!.lng());
@@ -282,13 +282,13 @@ const SetArrival = () => {
         const res = await jwtAxios.get(
           `/api/places?query=${searchValue}&latitude=${depLoc!.latitude}&longitude=${depLoc!.longitude}`,
         );
-        console.log(res.data.data.content);
+        // console.log(res.data.data.content);
         setSearchData(res.data.data.content);
       } else {
         const res = await jwtAxios.get(
           `/api/places?query=${searchValue}&latitude=${departuresLocation!.latitude}&longitude=${departuresLocation!.longitude}`,
         );
-        console.log(res.data.data.content);
+        // console.log(res.data.data.content);
         setSearchData(res.data.data.content);
       }
     } catch (error) {

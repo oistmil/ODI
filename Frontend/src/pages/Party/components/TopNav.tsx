@@ -63,7 +63,7 @@ const Modal: React.FC<ModalProps & { fetchData: () => void }> = ({
         },
       )
       .then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         if (res.data.status === 204) {
           toast.success(
             `${res.data.message} 선 차감된 금액: ${res.data.data.prepaidCost / currentParticipants}`,
@@ -99,7 +99,7 @@ const Modal: React.FC<ModalProps & { fetchData: () => void }> = ({
     jwtAxios
       .delete(`api/party-boards/${partyId}`, {})
       .then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         if (res.data.status === 204) {
           toast.success(`${res.data.message}`, { position: 'top-center' });
           nav('/home', { replace: true });

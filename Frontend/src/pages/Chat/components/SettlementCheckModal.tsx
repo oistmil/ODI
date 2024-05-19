@@ -92,8 +92,8 @@ const SettlementCheckModal: React.FC<SettlementCheckModalProps> = ({
   };
 
   const handleEvalSubmit = async () => {
-    console.log('평가 대상 PARTY ID', info!.partyId);
-    console.log('평가 내용', reviews);
+    // console.log('평가 대상 PARTY ID', info!.partyId);
+    // console.log('평가 내용', reviews);
     try {
       await axios
         .post(
@@ -109,7 +109,7 @@ const SettlementCheckModal: React.FC<SettlementCheckModalProps> = ({
           },
         )
         .then(res => {
-          console.log(res.data);
+          // console.log(res.data);
           if (res.data.status === 201) {
             closeModal();
             toast.success('평가가 완료되었습니다.');

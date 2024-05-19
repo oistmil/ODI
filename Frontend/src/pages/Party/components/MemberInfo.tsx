@@ -84,7 +84,7 @@ const MemberInfo: React.FC<IMemberInfoProps & { fetchData: () => void }> = ({
     jwtAxios
       .put(`api/parties/${partyId}/${memberId}`, {})
       .then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         if (res.data.status === 201) {
           toast.success(`${res.data.message}`, { position: 'top-center' });
           handleSendMessage('ENTER', nickname, memberId);
@@ -102,7 +102,7 @@ const MemberInfo: React.FC<IMemberInfoProps & { fetchData: () => void }> = ({
     jwtAxios
       .delete(`api/parties/${partyId}/${memberId}`, {})
       .then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         if (res.data.status === 204) {
           toast.success(`${res.data.message}`, { position: 'top-center' });
           handleSendAlarm('REJECT', memberId);
@@ -119,7 +119,7 @@ const MemberInfo: React.FC<IMemberInfoProps & { fetchData: () => void }> = ({
     jwtAxios
       .delete(`api/parties/${partyId}/${memberId}`, {})
       .then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         if (res.data.status === 204) {
           toast.success(`${res.data.message}`, { position: 'top-center' });
           handleSendMessage('KICK', nickname, memberId);

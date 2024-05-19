@@ -33,7 +33,7 @@ const PartyHistory = () => {
     setSelectedParty(null);
   };
 
-  console.log(parties);
+  // console.log(parties);
 
   useEffect(() => {
     if (selectedParty && partyModalRef.current) {

@@ -5,7 +5,7 @@ import { Layout } from '@/components/Layout';
 import watchPositionHook from '@/hooks/useRefreshLocation';
 
 const HomePage = () => {
-  console.log(window.innerWidth, window.innerHeight);
+  // console.log(window.innerWidth, window.innerHeight);
   watchPositionHook();
   return (
     <Layout>

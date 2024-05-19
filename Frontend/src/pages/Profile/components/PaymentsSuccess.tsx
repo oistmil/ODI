@@ -25,7 +25,7 @@ const PaymentsSuccess = () => {
           },
         },
       );
-      console.log('Success request result:', data);
+      // console.log('Success request result:', data);
       return true;
     } catch (error) {
       console.error('Failed to success request post:', error);

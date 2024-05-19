@@ -167,7 +167,7 @@ const NavBar: React.FC<INavBarProps> = ({
         },
       })
       .then(res => {
-        console.log(res);
+        // console.log(res);
         if (res.data.status === 204) {
           toast.success(res.data.message, {
             pauseOnFocusLoss: false,
@@ -197,7 +197,7 @@ const NavBar: React.FC<INavBarProps> = ({
     jwtAxios
       .post(`/api/parties/${partyId}/settlement`)
       .then(res => {
-        console.log(res);
+        // console.log(res);
         if (res.data.status === 204) {
           toast.success('정산을 완료했습니다');
           fetchData();
@@ -214,7 +214,7 @@ const NavBar: React.FC<INavBarProps> = ({
       .catch(err => {
         console.error(err);
         if (err.response.data.status === 402) {
-          console.log(isSettleFailModalOpen);
+          // console.log(isSettleFailModalOpen);
           toggleSettleFailModal();
         } else {
           toast.error(err.response.data.message);
@@ -235,7 +235,7 @@ const NavBar: React.FC<INavBarProps> = ({
         },
       )
       .then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         if (res.data.status === 204) {
           toast.success(
             `${res.data.message} 선 차감된 금액: ${res.data.data.prepaidCost / currentParticipants}`,
@@ -311,8 +311,8 @@ const NavBar: React.FC<INavBarProps> = ({
   };
 
   const handleEvalSubmit = async () => {
-    console.log('평가 대상 PARTY ID', info!.partyId);
-    console.log('평가 내용', reviews);
+    // console.log('평가 대상 PARTY ID', info!.partyId);
+    // console.log('평가 내용', reviews);
     try {
       await axios
         .post(
@@ -328,7 +328,7 @@ const NavBar: React.FC<INavBarProps> = ({
           },
         )
         .then(res => {
-          console.log(res.data);
+          // console.log(res.data);
           if (res.data.status === 201) {
             closeModal();
             toast.success('평가가 완료되었습니다.');

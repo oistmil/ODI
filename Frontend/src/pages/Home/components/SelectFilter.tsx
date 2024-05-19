@@ -64,7 +64,7 @@ const SelectFilter: React.FC<ISelctFilterProps> = ({
   useEffect(() => {
     if (selectedDate !== null) {
       const rsvDate = `${selectedYear}-${selectedMonth + 1 >= 10 ? `${selectedMonth + 1}` : `0${selectedMonth + 1}`}-${selectedDate >= 10 ? `${selectedDate}` : `0${selectedDate}`}`;
-      console.log(rsvDate);
+      // console.log(rsvDate);
       setDeparturesDate?.(rsvDate);
     } else {
       setDeparturesDate?.('');

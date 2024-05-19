@@ -32,7 +32,7 @@ const ChatListPage: React.FC = () => {
         },
       })
       .then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         setChatList(res.data);
       })
       .catch(err => {

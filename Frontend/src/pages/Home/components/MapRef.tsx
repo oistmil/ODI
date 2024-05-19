@@ -148,7 +148,7 @@ const MapRef = () => {
     setReqAutoMatchData(data);
     try {
       if (matchClient && matchClient.connected) {
-        console.log(data);
+        // console.log(data);
         matchClient.publish({
           destination: `/pub/match/${id}`,
           body: JSON.stringify(data),
@@ -176,14 +176,14 @@ const MapRef = () => {
         },
       });
 
-      console.log('Delete request successful:', response);
+      // console.log('Delete request successful:', response);
       setIsLoading(false);
       setIsAutoMatch(false);
       setDep?.('내 위치', { latitude: currentLat, longitude: currentLng });
       setArr?.('도착지를 설정해 주세요.', { latitude: 0, longitude: 0 });
       toast.error('매칭이 취소되었습니다.', { autoClose: 3000 });
     } catch (err) {
-      console.error('Match ID DELETE Request failed:', err);
+      // console.error('Match ID DELETE Request failed:', err);
     }
     closeAutoMatchModal();
   };
@@ -322,20 +322,20 @@ const MapRef = () => {
       const subscription = matchClient.subscribe(
         `/sub/matchResult/${id}`,
         message => {
-          console.log(JSON.parse(message.body));
+          // console.log(JSON.parse(message.body));
           const newMessage = JSON.parse(message.body);
 
-          console.log('AUTO MATCH MSG TYPE.', newMessage.type);
-          console.log('AUTO MATCH MSG BODY.', newMessage);
+          // console.log('AUTO MATCH MSG TYPE.', newMessage.type);
+          // console.log('AUTO MATCH MSG BODY.', newMessage);
 
           switch (newMessage.type) {
             case 'MATCH_SUCCESS':
               if (timeoutId.current !== null) {
-                console.log('30초 대기 TIMEOUT 삭제');
+                // console.log('30초 대기 TIMEOUT 삭제');
                 clearTimeout(timeoutId.current as NodeJS.Timeout);
               }
               if (intervalId.current !== null) {
-                console.log('30초 대기 INTERVAL 삭제');
+                // console.log('30초 대기 INTERVAL 삭제');
                 clearInterval(intervalId.current as NodeJS.Timeout);
               }
               setDep?.(newMessage.request.depName, {
@@ -367,7 +367,7 @@ const MapRef = () => {
               }, 1000);
               console.log('WAITTING...', newMessage.request);
               timeoutId.current = setTimeout(async () => {
-                console.log('Timeout reached, sending delete request');
+                // console.log('Timeout reached, sending delete request');
                 toast.error('근처에 매칭 대상이 없습니다.', {
                   autoClose: 4000,
                 });
@@ -381,7 +381,7 @@ const MapRef = () => {
                     },
                   );
 
-                  console.log('Delete request successful:', response);
+                  // console.log('Delete request successful:', response);
                   setIsLoading(false);
                 } catch (err) {
                   console.error('Match ID DELETE Request failed:', err);
@@ -428,7 +428,7 @@ const MapRef = () => {
           );
 
           const { content } = response.data.data;
-          console.log('MAP PARTY DATA LIST', content);
+          // console.log('MAP PARTY DATA LIST', content);
           setPartyData(content);
           updateMarkers(content);
         } catch (error) {
@@ -457,7 +457,7 @@ const MapRef = () => {
       });
 
       marker.addListener('click', () => {
-        console.log(item);
+        // console.log(item);
         setDetailParty(item);
         if (partyDetailModalRef.current) {
           partyDetailModalRef.current.showModal();
@@ -736,7 +736,7 @@ const MapRef = () => {
       const res = await jwtAxios.get(
         `/api/places?query=${searchValue}&latitude=${currentLat}&longitude=${currentLng}`,
       );
-      console.log(res.data.data.content);
+      // console.log(res.data.data.content);
       setSearchData(res.data.data.content);
     } catch (error) {
       failRequest();

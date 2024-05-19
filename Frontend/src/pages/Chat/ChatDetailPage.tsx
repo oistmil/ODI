@@ -60,7 +60,7 @@ const ChatDetailPage = () => {
         },
       })
       .then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         setInfo(res.data.data);
       })
       .catch(err => {

@@ -58,7 +58,7 @@ const PartyCreatePage = () => {
 
   const changeMaxParticipants = (e: ChangeEvent<HTMLSelectElement>) => {
     setMaxParticipants(parseInt(e.target.value));
-    console.log(maxParticipants);
+    // console.log(maxParticipants);
   };
 
   const changeContent = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -99,7 +99,7 @@ const PartyCreatePage = () => {
 
   const setDate = () => {
     const rsvDate = `${selectedYear}-${selectedMonth + 1 >= 10 ? `${selectedMonth + 1}` : `0${selectedMonth + 1}`}-${(selectedDate as number) >= 10 ? `${selectedDate}` : `0${selectedDate}`}T${selectedHour >= 10 ? `${selectedHour}` : `0${selectedHour}`}:${selectedMinute >= 10 ? `${selectedMinute}` : `0${selectedMinute}`}:00`;
-    console.log(rsvDate);
+    // console.log(rsvDate);
     setShowDate(
       `${selectedYear}-${selectedMonth + 1 >= 10 ? `${selectedMonth + 1}` : `0${selectedMonth + 1}`}-${(selectedDate as number) >= 10 ? `${selectedDate}` : `0${selectedDate}`} ${selectedHour >= 10 ? `${selectedHour}` : `0${selectedHour}`}:${selectedMinute >= 10 ? `${selectedMinute}` : `0${selectedMinute}`}`,
     );
@@ -163,10 +163,10 @@ const PartyCreatePage = () => {
       genderRestriction: genderRestriction,
       content: content,
     };
-    console.log(partyData);
+    // console.log(partyData);
     try {
       const result = await jwtAxios.post(`/api/party-boards`, partyData);
-      console.log(result.data.data);
+      // console.log(result.data.data);
       if (result.data.data) {
         setDepartures?.('내 위치', { latitude: currentLat, longitude: currentLng });
         setArrivals?.('도착지를 설정해 주세요.', { latitude: 0, longitude: 0 });
