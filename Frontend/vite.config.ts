@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
-import { VitePWA } from 'vite-plugin-pwa';
+// import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   plugins: [
@@ -11,15 +11,15 @@ export default defineConfig({
         icon: true,
       },
     }),
-    VitePWA({
-      registerType: 'autoUpdate',
-      srcDir: '.',
-      filename: 'service-worker.js',
-      workbox: {
-        navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/oauth2\/authorization\/naver/],
-      },
-    }),
+    // VitePWA({
+    //   registerType: 'autoUpdate',
+    //   srcDir: '.',
+    //   filename: 'service-worker.js',
+    //   workbox: {
+    //     navigateFallback: '/index.html',
+    //     navigateFallbackDenylist: [/^\/oauth2\/authorization\/naver/],
+    //   },
+    // }),
   ],
   resolve: {
     alias: [{ find: '@', replacement: '/src' }],
