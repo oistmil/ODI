@@ -17,7 +17,6 @@
     />
     <meta name="description" content="내 주변 택시 합승 플랫폼" />
     <meta name="theme-color" content="#FFFFFF" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OD!</title>
   </head>
   <body>
@@ -30,7 +29,14 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/service-worker.js');
+          navigator.serviceWorker
+            .register('/service-worker.js')
+            .then(registration => {
+              console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            })
+            .catch(error => {
+              console.error('ServiceWorker registration failed: ', error);
+            });
         });
       }
     </script>

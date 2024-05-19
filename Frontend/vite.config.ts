@@ -3,7 +3,6 @@ import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
 import { VitePWA } from 'vite-plugin-pwa';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
@@ -12,7 +11,11 @@ export default defineConfig({
         icon: true,
       },
     }),
-    VitePWA({ registerType: 'autoUpdate' }),
+    VitePWA({
+      registerType: 'autoUpdate',
+      srcDir: '.',
+      filename: 'service-worker.js',
+    }),
   ],
   resolve: {
     alias: [{ find: '@', replacement: '/src' }],
@@ -22,7 +25,6 @@ export default defineConfig({
     port: 3000,
     host: true,
   },
-  // SockJS global 설정 필요해서 추가
   define: {
     global: 'window',
   },
