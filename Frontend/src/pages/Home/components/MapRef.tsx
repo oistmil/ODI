@@ -226,22 +226,21 @@ const MapRef = () => {
 
   const getAddByLatLng = async (lat: number, lng: number) => {
     try {
-      const res = await jwtAxios.get(`/api/places/place?longitude=${lng}&latitude=${lat}`);
+      const { data } = await jwtAxios.get(`/api/places/place?longitude=${lng}&latitude=${lat}`);
 
-      console.log(res);
-      console.log('장소 이름 : ', res.data.data.placeName);
-      console.log('건물 이름 : ', res.data.data.buildingName);
-      console.log('지번 주소 : ', res.data.data.jibunAddress);
-      console.log('도로명 주소 : ', res.data.data.roadNameAddress);
       setCurLocAdd(
-        res.data.data.roadNameAddress !== null
-          ? res.data.data.roadNameAddress
-          : res.data.data.jibunAddress,
+        data.data.roadNameAddress === null
+          ? data.data.jibunAddress === null
+            ? '장소 정보 미제공'
+            : data.data.jibunAddress
+          : data.data.roadNameAddress,
       );
       successReq();
-      return res.data.data.roadNameAddress !== null
-        ? res.data.data.roadNameAddress
-        : res.data.data.jibunAddress;
+      return data.data.roadNameAddress === null
+        ? data.data.jibunAddress === null
+          ? '장소 정보 미제공'
+          : data.data.jibunAddress
+        : data.data.roadNameAddress;
     } catch (error) {
       failReq();
     }
@@ -332,6 +331,10 @@ const MapRef = () => {
               setAutoMatchData(newMessage);
               setIsSuccess(true);
               console.log('SUCCESS...', newMessage.request);
+              toast.success('매칭이 성공적으로 이루어졌습니다.', {
+                onClick: successMatch,
+                autoClose: 5000,
+              });
               break;
             case 'MATCH_NOT_FOUND':
               console.log('MATCH_NOT_FOUND received, 30초 대기 진행 후 DELETE 요청 전송');
@@ -588,7 +591,7 @@ const MapRef = () => {
           </div>
           {isLoading === false && isSuccess === false && (
             <button className='btn bg-OD_PURPLE text-white border-none' onClick={reqAutoMatch}>
-              설정하기
+              자동매칭 신청
             </button>
           )}
         </div>

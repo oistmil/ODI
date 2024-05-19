@@ -1,4 +1,6 @@
 import jwtAxios from '@/utils/JWTUtil';
+import axios from 'axios';
+import { getCookie } from '@/utils/CookieUtil';
 import { IPostParty } from '@/types/Party';
 import TopHeader from '@/components/TopHeader.tsx';
 import SvgGoBack from '@/assets/svg/SvgGoBack';
@@ -14,6 +16,7 @@ import latLngAddStore from '@/stores/useLatLngAddStore';
 import PartyMap from './components/PartyMap';
 import Calendar from '@/components/Calendar.tsx';
 import TimePicker from '@/components/Maps/TimePicker';
+import { toast } from 'react-toastify';
 
 // NOTE : 유효성 검사
 const PartyCreatePage = () => {
@@ -22,7 +25,7 @@ const PartyCreatePage = () => {
   const [title, setTitle] = useState<string>('');
   const titleRef = useRef<HTMLInputElement>(null);
   const { currentAdd, currentLat, currentLng } = latLngAddStore();
-  const { setDepartures } = partyStore();
+  const { setDepartures, setArrivals } = partyStore();
   const nav = useNavigate();
   const [departuresDate, setDeparturesDate] = useState<Date | string>('');
   const [maxParticipants, setMaxParticipants] = useState<number>(4);
@@ -31,7 +34,7 @@ const PartyCreatePage = () => {
   const [category, setCategory] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const today = new Date();
-  const [selectedDate, setSelectedDate] = useState<number>(today.getDate());
+  const [selectedDate, setSelectedDate] = useState<number | null>(today.getDate());
   const [showDate, setShowDate] = useState<string>('');
   const [selectedMonth, setSelectedMonth] = useState<number>(today.getMonth());
   const [selectedYear, setSelectedYear] = useState<number>(today.getFullYear());
@@ -78,10 +81,15 @@ const PartyCreatePage = () => {
     }
   };
 
-  const setDateCilck = (day: number, month: number, year: number) => {
-    setSelectedDate(day);
-    setSelectedMonth(month - 1);
-    setSelectedYear(year);
+  const setDateClick = (day: number, month: number, year: number) => {
+    if (selectedDate === day && selectedMonth === month - 1 && selectedYear === year) {
+      setSelectedDate(null);
+      setDeparturesDate?.('');
+    } else {
+      setSelectedDate(day);
+      setSelectedMonth(month - 1);
+      setSelectedYear(year);
+    }
   };
 
   const setTimeClick = (hour: number, minute: number) => {
@@ -90,15 +98,59 @@ const PartyCreatePage = () => {
   };
 
   const setDate = () => {
-    const rsvDate = `${selectedYear}-${selectedMonth + 1 >= 10 ? `${selectedMonth + 1}` : `0${selectedMonth + 1}`}-${selectedDate >= 10 ? `${selectedDate}` : `0${selectedDate}`}T${selectedHour >= 10 ? `${selectedHour}` : `0${selectedHour}`}:${selectedMinute >= 10 ? `${selectedMinute}` : `0${selectedMinute}`}:00`;
+    const rsvDate = `${selectedYear}-${selectedMonth + 1 >= 10 ? `${selectedMonth + 1}` : `0${selectedMonth + 1}`}-${(selectedDate as number) >= 10 ? `${selectedDate}` : `0${selectedDate}`}T${selectedHour >= 10 ? `${selectedHour}` : `0${selectedHour}`}:${selectedMinute >= 10 ? `${selectedMinute}` : `0${selectedMinute}`}:00`;
     console.log(rsvDate);
     setShowDate(
-      `${selectedYear}-${selectedMonth + 1 >= 10 ? `${selectedMonth + 1}` : `0${selectedMonth + 1}`}-${selectedDate >= 10 ? `${selectedDate}` : `0${selectedDate}`} ${selectedHour >= 10 ? `${selectedHour}` : `0${selectedHour}`}:${selectedMinute >= 10 ? `${selectedMinute}` : `0${selectedMinute}`}`,
+      `${selectedYear}-${selectedMonth + 1 >= 10 ? `${selectedMonth + 1}` : `0${selectedMonth + 1}`}-${(selectedDate as number) >= 10 ? `${selectedDate}` : `0${selectedDate}`} ${selectedHour >= 10 ? `${selectedHour}` : `0${selectedHour}`}:${selectedMinute >= 10 ? `${selectedMinute}` : `0${selectedMinute}`}`,
     );
     setDeparturesDate(rsvDate);
   };
 
+  const getAddByLatLng = async (lat: number, lng: number) => {
+    try {
+      const { data } = await axios.get(`/api/places/place?longitude=${lng}&latitude=${lat}`, {
+        headers: { AUTHORIZATION: `Bearer ${getCookie('Authorization')}` },
+      });
+
+      return data.data.roadNameAddress === null
+        ? data.data.roadNameAddress === null
+          ? '주소 정보 미제공'
+          : data.data.jibunAddress
+        : data.data.roadNameAddress;
+    } catch (error) {}
+  };
+
   const postParty = async () => {
+    if (title === '') {
+      toast.error('제목을 입력해 주세요.');
+      titleRef.current?.focus();
+      return;
+    } else if (arrivalsName === '도착지를 설정해 주세요.') {
+      toast.error('도착지를 설정해 주세요.');
+      window.scrollTo(0, 0);
+      return;
+    } else if (departuresDate === '') {
+      toast.error('출발시간을 설정해 주세요.');
+      window.scrollTo(0, 200);
+      return;
+    } else if (isChangeMaxParticipants === false) {
+      toast.error('모집인원을 설정해 주세요.');
+      window.scrollTo(0, 300);
+      return;
+    } else if (category === '') {
+      toast.error('카테고리를 선택해 주세요.');
+      window.scrollTo(0, 300);
+      return;
+    }
+
+    let newDepartureName = departuresName;
+
+    if (departuresName === '내 위치') {
+      newDepartureName = await getAddByLatLng(
+        departuresLocation!.latitude,
+        departuresLocation!.longitude,
+      );
+    }
     const partyData: IPostParty = {
       title: title,
       departuresName: departuresName as string,
@@ -116,6 +168,8 @@ const PartyCreatePage = () => {
       const result = await jwtAxios.post(`/api/party-boards`, partyData);
       console.log(result.data.data);
       if (result.data.data) {
+        setDepartures?.('내 위치', { latitude: currentLat, longitude: currentLng });
+        setArrivals?.('도착지를 설정해 주세요.', { latitude: 0, longitude: 0 });
         nav(`/party/${result.data.data}`);
       }
     } catch (error) {
@@ -181,7 +235,7 @@ const PartyCreatePage = () => {
           <h3 className='font-bold text-[20px] text-black'>출발시간</h3>
           <div className='mt-1 border border-gray-300'></div>
           <h4 className='mt-3 text-lg text-black'>날짜</h4>
-          <Calendar onDateClick={setDateCilck} />
+          <Calendar onDateClick={setDateClick} selectedDate={selectedDate} />
           {/* <p className='flex py-2 justify-end'>날짜를 선택해 주세요.</p> */}
           <h4 className='mt-3 text-lg text-black'>시간</h4>
           <div className='flex justify-center'>
@@ -222,11 +276,11 @@ const PartyCreatePage = () => {
         <div className='absolute w-[100%] flex justify-center text-[18px] font-semibold text-white'>
           파티 생성
         </div>
-        <div
+        {/* <div
           className='absolute w-[15%] h-[80%] right-0 mx-4 bg-OD_PURPLE rounded-lg flex justify-center items-center font-semibold text-white hover:text-OD_YELLOW'
           onClick={postParty}>
           만들기
-        </div>
+        </div> */}
       </div>
       <div className='w-100 px-8 mt-3'>
         <input
@@ -396,6 +450,13 @@ const PartyCreatePage = () => {
             <span className='label-text-alt'>{content.length} / 100</span>
           </div>
         </label>
+      </div>
+      <div className='h-[15%] my-5 mx-8'>
+        <button
+          className='w-[100%] h-[50%] bg-OD_PURPLE rounded-full text-white font-bold text-[20px] hover:bg-OD_GREEN'
+          onClick={postParty}>
+          파티 만들기
+        </button>
       </div>
     </div>
   );

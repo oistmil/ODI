@@ -7,6 +7,7 @@ export interface CalendarInfo {
 
 interface CalendarProps {
   onDateClick: (day: number, month: number, year: number) => void;
+  selectedDate: number | null;
 }
 
 const generateDate = (year: number, month: number): CalendarInfo[] => {
@@ -20,38 +21,32 @@ const generateDate = (year: number, month: number): CalendarInfo[] => {
   return result;
 };
 
-const Calendar: React.FC<CalendarProps> = ({ onDateClick }) => {
+const Calendar: React.FC<CalendarProps> = ({ onDateClick, selectedDate }) => {
   const today = new Date();
   const year = today.getFullYear();
   const [selectedMonth, setSelectedMonth] = useState<number>(today.getMonth());
-  const [selectedDate, setSelectedDate] = useState<number>(today.getDate());
   const [calendarData, setCalendarData] = useState<CalendarInfo[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [flag, setFlag] = useState<boolean>(false);
   const dateRef = useRef<HTMLDivElement | null>(null);
   const todayDate = new Date().getDate();
 
-  // 오늘 날짜를 중앙에 보이도록
   useEffect(() => {
     if (!dateRef.current) return;
     const left = dateRef.current!.offsetLeft - window.innerWidth / 2 + dateRef.current.offsetWidth;
     containerRef.current?.scrollTo({ left: left, behavior: 'smooth' });
-  }, [flag, selectedMonth]);
+  }, [selectedMonth]);
 
   useEffect(() => {
     setCalendarData(generateDate(year, selectedMonth));
-    setFlag(true);
   }, [year, selectedMonth]);
 
   const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedMonth(parseInt(e.target.value) - 1);
-    setSelectedDate(1);
     onDateClick(1, parseInt(e.target.value), year);
   };
 
   const handleClick = (day: number) => {
-    setSelectedDate(day);
     onDateClick(day, selectedMonth + 1, year);
   };
 
@@ -67,8 +62,8 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick }) => {
   };
 
   return (
-    <div className='flex flex-row text-black px-4 py-4'>
-      <div className='h-[36px] flex items-center'>
+    <div className='w-[100%] flex flex-row text-black px-4 py-4 gap-2'>
+      <div className='flex items-center'>
         <select
           value={selectedMonth + 1}
           onChange={handleMonthChange}
@@ -87,12 +82,12 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick }) => {
           <option value={12}>12월</option>
         </select>
       </div>
-      <div ref={containerRef} className='flex flex-row gap-3 overflow-auto pl-4'>
+      <div ref={containerRef} className='flex flex-row gap-3 pl-4 overflow-scroll'>
         {calendarData.map((item, id) => (
           <div
             key={id}
-            ref={todayDate == item.day ? dateRef : undefined}
-            className={`flex flex-col  items-center px-3 ${selectedDate === item.day ? 'rounded-2xl bg-gray-600 text-white' : ''}`}
+            ref={todayDate === item.day ? dateRef : undefined}
+            className={`flex flex-col items-center px-3 ${selectedDate === item.day ? 'rounded-2xl bg-gray-300' : ''}`}
             onClick={() => handleClick(item.day)}
             data-day={item.day}>
             <button>

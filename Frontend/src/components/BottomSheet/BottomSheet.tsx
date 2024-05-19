@@ -14,29 +14,27 @@ const BottomSheet: React.FC = () => {
   const { sheet, handleUp, content } = useBottomSheet();
   const [isToday, setIsToday] = useState<boolean>(false);
   const [category, setCategory] = useState<string>('');
-  const [distance, setDistance] = useState<string>('');
+  const [distance, setDistance] = useState<string>('distance,asc');
   const [gender, setGender] = useState<string>('');
   const [departuresDate, setDeparturesDate] = useState<Date | string>('');
   const [listData, setListData] = useState<IParty[]>([]);
 
-  useEffect(() => {
-    // console.log(latitude, longitude, googleMap);
+  const getListData = async () => {
     if (googleMap === null) return;
-    const getListData = async () => {
-      try {
-        const response = await jwtAxios.get(
-          `api/party-boards?page=0&size=10&sort=${distance}&isToday=${isToday}&departuresDate=${departuresDate}&gender=${gender}&category=${category}&longitude=${longitude}&latitude=${latitude}`,
-        );
-        console.log('FILTER DATA LIST RESPONSE', response);
-        const { content } = response.data.data;
-        console.log('FILTER DATA LIST', content);
-        setListData(content);
-      } catch (error) {
-        console.error('FILTER DATA LIST ERROR', error);
-      }
-    };
+    try {
+      const response = await jwtAxios.get(
+        `api/party-boards?page=0&size=10&sort=${distance}&isToday=${isToday}&departuresDate=${departuresDate}&gender=${gender}&category=${category}&longitude=${longitude}&latitude=${latitude}`,
+      );
+      const { content } = response.data.data;
+      setListData(content);
+    } catch (error) {
+      console.error('FILTER DATA LIST ERROR', error);
+    }
+  };
+
+  useEffect(() => {
     getListData();
-  }, [googleMap, isToday, category, distance, gender, departuresDate]);
+  }, [googleMap, latitude, longitude, isToday, category, distance, gender, departuresDate]);
 
   return (
     <>
@@ -51,7 +49,7 @@ const BottomSheet: React.FC = () => {
         </div>
         <div className='mt-4 bg-white rounded-t-3xl w-[100%] h-[90%]'>
           <BottomSheetHandle />
-          <div className='w-[100%] bg-white'>
+          <div className='w-[100%] bg-white z-auto'>
             <SelectFilter
               setIsToday={setIsToday}
               setCategory={setCategory}
@@ -64,7 +62,13 @@ const BottomSheet: React.FC = () => {
             ref={content}
             className='w-[100%] h-dvh flex justify-center bg-white overflow-scroll'>
             <div className='w-[85%] h-[50%] overflow-scroll'>
-              <BottomSheetContent partyList={listData} />
+              {listData.length > 0 ? (
+                <BottomSheetContent partyList={listData} />
+              ) : (
+                <div className='flex flex-col items-center justify-center mt-3 gap-6 w-[100%]'>
+                  <div className='text-lg text-gray-400'>게시글이 없습니다 :(</div>
+                </div>
+              )}
             </div>
           </div>
         </div>

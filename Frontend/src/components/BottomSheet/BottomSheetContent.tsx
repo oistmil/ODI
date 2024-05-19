@@ -18,6 +18,7 @@ export const categoryList: { [key: string]: string } = {
   AIRPORT: '공항',
   TRAVEL: '여행',
   RESERVIST: '예비군',
+  MATCHING: '자동매칭',
 };
 
 export const categoryColorList: { [key: string]: string } = {
@@ -28,6 +29,7 @@ export const categoryColorList: { [key: string]: string } = {
   AIRPORT: 'border-OD_SKYBLUE text-gray-500 bg-OD_SKYBLUE bg-opacity-30',
   TRAVEL: 'border-OD_ORANGE text-OD_ORANGE bg-OD_ORANGE bg-opacity-30',
   RESERVIST: 'border-OD_SCARLET text-OD_SCARLET bg-OD_SCARLET bg-opacity-30',
+  MATCHING: 'border-OD_SKYBLUE text-blue-500 bg-OD_SKYBLUE bg-opacity-30',
 };
 
 export const genderRestrictionList: { [key: string]: string } = {
@@ -50,7 +52,25 @@ export const stateColorList: { [key: string]: string } = {
   SETTLED: 'border-gray-200 bg-gray-200 text-gray-500',
 };
 
+// NOTE : 이용내역의 출발일 형식과 목록조회의 출발일 형식이 다름
+// const formatDateString = (dateString: string) => {
+//   const date = new Date(dateString);
+
+//   const year = date.getFullYear();
+//   const month = String(date.getMonth() + 1).padStart(2, '0');
+//   const day = String(date.getDate()).padStart(2, '0');
+//   const hours = String(date.getHours()).padStart(2, '0');
+//   const minutes = String(date.getMinutes()).padStart(2, '0');
+
+//   return `${year}-${month}-${day} ${hours}:${minutes}`;
+// };
+
 export const calcDate = (dateString: string) => {
+  // let convertedDate = dateString;
+  // if (convertedDate.includes('T')) {
+  //   convertedDate = formatDateString(dateString);
+  // }
+  // const date = new Date(convertedDate.replace(' ', 'T') + '+09:00');
   const date = new Date(dateString.replace(' ', 'T') + '+09:00');
   const now = new Date();
 

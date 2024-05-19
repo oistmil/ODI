@@ -23,44 +23,26 @@ const SelectFilter: React.FC<ISelctFilterProps> = ({
   const [selectedGender, setSelectedGender] = useState<string>('');
   const [isTodayChecked, setIsTodayChecked] = useState<boolean>(false);
   const today = new Date();
-  const [selectedDate, setSelectedDate] = useState<number>(today.getDate());
+  const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<number>(today.getMonth());
   const [selectedYear, setSelectedYear] = useState<number>(today.getFullYear());
 
   const Category = [
-    {
-      tag: 'DAILY',
-      name: '일상',
-    },
-    {
-      tag: 'UNIVERSITY',
-      name: '대학교',
-    },
-    {
-      tag: 'COMMUTE',
-      name: '출퇴근',
-    },
-    {
-      tag: 'CONCERT',
-      name: '콘서트',
-    },
-    {
-      tag: 'AIRPORT',
-      name: '공항',
-    },
-    {
-      tag: 'TRAVEL',
-      name: '여행',
-    },
-    {
-      tag: 'RESERVIST',
-      name: '예비군',
-    },
+    { tag: 'DAILY', name: '일상' },
+    { tag: 'UNIVERSITY', name: '대학교' },
+    { tag: 'COMMUTE', name: '출퇴근' },
+    { tag: 'CONCERT', name: '콘서트' },
+    { tag: 'AIRPORT', name: '공항' },
+    { tag: 'TRAVEL', name: '여행' },
+    { tag: 'RESERVIST', name: '예비군' },
   ];
 
-  const distanceOptions = [
-    { value: 'distance,desc', name: '먼 순서' },
-    { value: 'distance,asc', name: '가까운 순서' },
+  const sortOptions = [
+    { value: '', name: '전체 보기' },
+    { value: 'distance,asc', name: '가까운 출발지' },
+    { value: 'distance,desc', name: '먼 출발지' },
+    { value: 'departuresDate,asc', name: '가까운 출발시간' },
+    { value: 'departuresDate,desc', name: '먼 출발시간' },
   ];
 
   const genderOptions = [
@@ -69,15 +51,24 @@ const SelectFilter: React.FC<ISelctFilterProps> = ({
   ];
 
   const setDateClick = (day: number, month: number, year: number) => {
-    setSelectedDate(day);
-    setSelectedMonth(month - 1);
-    setSelectedYear(year);
+    if (selectedDate === day && selectedMonth === month - 1 && selectedYear === year) {
+      setSelectedDate(null);
+      setDeparturesDate?.('');
+    } else {
+      setSelectedDate(day);
+      setSelectedMonth(month - 1);
+      setSelectedYear(year);
+    }
   };
 
   useEffect(() => {
-    const rsvDate = `${selectedYear}-${selectedMonth + 1 >= 10 ? `${selectedMonth + 1}` : `0${selectedMonth + 1}`}-${selectedDate >= 10 ? `${selectedDate}` : `0${selectedDate}`}`;
-    console.log(rsvDate);
-    setDeparturesDate?.(rsvDate);
+    if (selectedDate !== null) {
+      const rsvDate = `${selectedYear}-${selectedMonth + 1 >= 10 ? `${selectedMonth + 1}` : `0${selectedMonth + 1}`}-${selectedDate >= 10 ? `${selectedDate}` : `0${selectedDate}`}`;
+      console.log(rsvDate);
+      setDeparturesDate?.(rsvDate);
+    } else {
+      setDeparturesDate?.('');
+    }
   }, [selectedDate, selectedMonth, selectedYear]);
 
   const handleCategoryChange = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -106,7 +97,6 @@ const SelectFilter: React.FC<ISelctFilterProps> = ({
   };
 
   useEffect(() => {
-    // Set default value for distance
     setDistance?.('distance,asc');
   }, [setDistance]);
 
@@ -124,7 +114,6 @@ const SelectFilter: React.FC<ISelctFilterProps> = ({
             />
           </label>
         </div>
-
         <div className='self-center flex flex-col'>
           <label className='text-[13px] text-black'>카테고리</label>
           <select
@@ -139,23 +128,21 @@ const SelectFilter: React.FC<ISelctFilterProps> = ({
             ))}
           </select>
         </div>
-
         <div className='self-center flex flex-col'>
-          <label className='text-[13px] text-black'>거리</label>
+          <label className='text-[13px] text-black'>정렬</label>
           <select
             className='select select-bordered select-xs'
             value={selectedSort}
             onChange={handleSortChange}>
-            {distanceOptions.map(option => (
+            {sortOptions.map(option => (
               <option key={option.value} value={option.value}>
                 {option.name}
               </option>
             ))}
           </select>
         </div>
-
         <div className='self-center flex flex-col pr-1'>
-          <label className='text-[13px] text-black'>동승자</label>
+          <label className='text-[13px] text-black'>성별</label>
           <select
             className='select select-bordered select-xs'
             value={selectedGender}
@@ -169,9 +156,9 @@ const SelectFilter: React.FC<ISelctFilterProps> = ({
           </select>
         </div>
       </div>
-      {isTodayChecked ? null : (
+      {isTodayChecked === true ? null : (
         <div className='border-b-[1px] border-gray-300 animate-fadeIn'>
-          <Calendar onDateClick={setDateClick} />
+          <Calendar onDateClick={setDateClick} selectedDate={selectedDate} />
         </div>
       )}
     </>

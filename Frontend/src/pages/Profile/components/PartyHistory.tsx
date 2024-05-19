@@ -106,9 +106,11 @@ const PartyHistory = () => {
                   <div className='py-[2px] px-1 border border-gray-200 bg-gray-200 rounded-lg text-gray-500 text-[13px] font-semibold'>
                     {genderRestrictionList[party.genderRestriction]}
                   </div>
-                  <div className='py-[2px] px-1 text-gray-500 text-[13px] ml-auto '>
-                    {calcDate(party.departuresDate)}
-                  </div>
+                  {party.category === 'MATCHING' ? null : (
+                    <div className='py-[2px] px-1 text-gray-500 text-[13px] ml-auto '>
+                      {calcDate(party.departuresDate)}
+                    </div>
+                  )}
                 </div>
                 <div className='w-[100%] h-[25%] flex items-center text-[18px] font-bold'>
                   {party.title}
@@ -119,10 +121,12 @@ const PartyHistory = () => {
                   <div>{'->'}</div>
                   <div>{party.arrivalsName}</div>
                 </div>
-                <div className='w-[100%] h-[15%] flex items-center gap-2 text-gray-500'>
-                  <SvgTimerIcon />
-                  <div>{formatDate(party.departuresDate)}</div>
-                </div>
+                {party.category === 'MATCHING' ? null : (
+                  <div className='w-[100%] h-[15%] flex items-center gap-2 text-gray-500'>
+                    <SvgTimerIcon />
+                    <div>{formatDate(party.departuresDate)}</div>
+                  </div>
+                )}
                 <div className='w-[100%] h-[30%] flex items-center gap-4'>
                   {party.partyMemberDTOList.map(member => (
                     <div
@@ -164,9 +168,11 @@ const PartyHistory = () => {
                   <div className='py-[2px] px-1 border border-gray-200 bg-gray-200 rounded-lg text-gray-500 text-[13px] font-semibold'>
                     {genderRestrictionList[party.genderRestriction]}
                   </div>
-                  <div className='py-[2px] px-1 text-gray-500 text-[13px] ml-auto '>
-                    {calcDate(party.departuresDate)}
-                  </div>
+                  {party.category === 'MATCHING' ? null : (
+                    <div className='py-[2px] px-1 text-gray-500 text-[13px] ml-auto '>
+                      {calcDate(party.departuresDate)}
+                    </div>
+                  )}
                 </div>
                 <div className='w-[100%] h-[25%] flex items-center text-[18px] font-bold'>
                   {party.title}
@@ -177,10 +183,12 @@ const PartyHistory = () => {
                   <div>{'->'}</div>
                   <div>{party.arrivalsName}</div>
                 </div>
-                <div className='w-[100%] h-[15%] flex items-center gap-2 text-gray-500'>
-                  <SvgTimerIcon />
-                  <div>{formatDate(party.departuresDate)}</div>
-                </div>
+                {party.category === 'MATCHING' ? null : (
+                  <div className='w-[100%] h-[15%] flex items-center gap-2 text-gray-500'>
+                    <SvgTimerIcon />
+                    <div>{formatDate(party.departuresDate)}</div>
+                  </div>
+                )}
                 <div className='w-[100%] h-[30%] flex items-center gap-4'>
                   {party.partyMemberDTOList.map(member => (
                     <div
@@ -218,9 +226,11 @@ const PartyHistory = () => {
                   <div className='py-[2px] px-1 border border-gray-200 bg-gray-200 rounded-lg text-gray-500 text-[13px] font-semibold'>
                     {genderRestrictionList[party.genderRestriction]}
                   </div>
-                  <div className='py-[2px] px-1 text-gray-500 text-[13px] ml-auto '>
-                    {calcDate(party.departuresDate)}
-                  </div>
+                  {party.category === 'MATCHING' ? null : (
+                    <div className='py-[2px] px-1 text-gray-500 text-[13px] ml-auto '>
+                      {calcDate(party.departuresDate)}
+                    </div>
+                  )}
                 </div>
                 <div className='w-[100%] h-[25%] flex items-center text-[18px] font-bold'>
                   {party.title}
@@ -231,10 +241,12 @@ const PartyHistory = () => {
                   <div>{'->'}</div>
                   <div>{party.arrivalsName}</div>
                 </div>
-                <div className='w-[100%] h-[15%] flex items-center gap-2 text-gray-500'>
-                  <SvgTimerIcon />
-                  <div>{formatDate(party.departuresDate)}</div>
-                </div>
+                {party.category === 'MATCHING' ? null : (
+                  <div className='w-[100%] h-[15%] flex items-center gap-2 text-gray-500'>
+                    <SvgTimerIcon />
+                    <div>{formatDate(party.departuresDate)}</div>
+                  </div>
+                )}
                 <div className='w-[100%] h-[30%] flex items-center gap-4'>
                   {party.partyMemberDTOList.map(member => (
                     <div
