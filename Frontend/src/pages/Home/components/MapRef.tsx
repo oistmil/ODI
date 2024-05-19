@@ -535,12 +535,12 @@ const MapRef = () => {
                 <div className='w-[100%] h-[40%] mx-8 mt-5 rounded-xl flex flex-col items-center justify-center overflow-hidden'>
                   <AutoPartyMap />
                 </div>
-                <div className='w-[100%] h-[15%] flex flex-col justify-evenly items-center'>
-                  <div className='text-gray-500'>매칭 대기중</div>
+                <div className='w-[100%] h-[25%] flex flex-col justify-evenly items-center'>
+                  <div className='text-gray-500 font-semibold text-[20px]'>매칭 대기중</div>
                   <div className='text-gray-500'>30초 이후 매칭신청이 종료됩니다!</div>
                   <div className='w-[80%] bg-gray-200 rounded-lg overflow-hidden'>
                     <div
-                      className='bg-blue-500 h-4 transition-all duration-1000 ease-linear'
+                      className='bg-blue-500 h-4 transition-all duration-1000 ease-linear rounded-full'
                       style={{ width: `${progress}%` }}></div>
                   </div>
                 </div>
@@ -578,6 +578,7 @@ const MapRef = () => {
                 onClick={() => {
                   setIsSuccess(false);
                   setIsLoading(false);
+                  setIsAutoMatch(false);
                   setDep?.('내 위치', { latitude: currentLat, longitude: currentLng });
                   setArr?.('도착지를 설정해 주세요.', { latitude: 0, longitude: 0 });
                 }}>
