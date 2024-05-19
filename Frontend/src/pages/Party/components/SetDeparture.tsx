@@ -1,8 +1,9 @@
 import { Status, Wrapper } from '@googlemaps/react-wrapper';
 import { ViteConfig } from '@/apis/ViteConfig';
 import { useState, useEffect, useRef, ChangeEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import partyStore from '@/stores/usePartyStore';
+import autoPartyStore from '@/stores/useAutoPartyStore';
 import LatLngAddStore from '@/stores/useLatLngAddStore';
 import DarkModeStyle from '@/components/Maps/DarkModeStyle';
 import DEPARTURE from '@/assets/image/icons/SETDEPARTURE.png';
@@ -15,24 +16,26 @@ import { IPlaceInfo } from '@/types/Party';
 import jwtAxios from '@/utils/JWTUtil';
 import SearchDepartureItem from './SearchDepartureItem';
 import { toast } from 'react-toastify';
-import usePreviousPath from '@/hooks/usePreviousPath';
 
 const MapRef = () => {
   const ref = useRef<HTMLDivElement>(null);
   const nav = useNavigate();
+  const location = useLocation();
+  const { from } = (location.state as { from: string }) || {};
   const { currentLat, currentLng } = LatLngAddStore();
   const { setDepartures, departuresName, departuresLocation } = partyStore();
+  const { setDep, depName, depLoc } = autoPartyStore();
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [marker, setMarker] = useState<google.maps.Marker | null>(null);
   const [mapCenter, setMapCenter] = useState<google.maps.LatLng>(
     new google.maps.LatLng({ lat: currentLat, lng: currentLng }),
   );
   const [departName, setDepartName] = useState<string>('내 위치');
-  // const previousPath = usePreviousPath();
-  // console.log(`Previous path: ${previousPath}`);
 
   useEffect(() => {
     setDepartures?.('내 위치', { latitude: currentLat, longitude: currentLng });
+
+    setDep?.('내 위치', { latitude: currentLat, longitude: currentLng });
   }, []);
 
   const successReq = () => {
@@ -63,6 +66,7 @@ const MapRef = () => {
     });
 
     setDepartures?.('내 위치', { latitude: pos.coords.latitude, longitude: pos.coords.longitude });
+    setDep?.('내 위치', { latitude: pos.coords.latitude, longitude: pos.coords.longitude });
     setDepartName('내 위치');
 
     if (map && marker) {
@@ -74,17 +78,6 @@ const MapRef = () => {
       marker!.setPosition(currentPos);
     }
   };
-
-  // const getAddByGeoCode = (lat: number, lng: number) => {
-  //   const geocoder = new google.maps.Geocoder();
-  //   const latlng = new google.maps.LatLng(lat, lng);
-
-  //   geocoder.geocode({ location: latlng }, (results, status) => {
-  //     if (status === 'OK') {
-  //       console.log(results);
-  //     }
-  //   });
-  // };
 
   const getAddByLatLng = async (lat: number, lng: number) => {
     try {
@@ -102,21 +95,38 @@ const MapRef = () => {
             : res.data.data.buildingName
           : res.data.data.placeName,
       );
-      setDepartures?.(
-        res.data.data.placeName === null
-          ? res.data.data.buildingName === null
-            ? '장소 또는 건물 이름 없음'
-            : res.data.data.buildingName
-          : res.data.data.placeName,
-        { longitude: lng, latitude: lat },
-      );
+
+      if (from === '/home') {
+        setDep?.(
+          res.data.data.placeName === null
+            ? res.data.data.buildingName === null
+              ? '장소 또는 건물 이름 없음'
+              : res.data.data.buildingName
+            : res.data.data.placeName,
+          { longitude: lng, latitude: lat },
+        );
+      } else {
+        setDepartures?.(
+          res.data.data.placeName === null
+            ? res.data.data.buildingName === null
+              ? '장소 또는 건물 이름 없음'
+              : res.data.data.buildingName
+            : res.data.data.placeName,
+          { longitude: lng, latitude: lat },
+        );
+      }
+
       successReq();
     } catch (error) {
       failReq();
     }
   };
 
-  console.log(departuresName, departuresLocation);
+  if (from === '/home') {
+    console.log(depName, depLoc);
+  } else {
+    console.log(departuresName, departuresLocation);
+  }
 
   useEffect(() => {
     if (ref.current) {
@@ -185,18 +195,24 @@ const MapRef = () => {
         <SvgCurLoc style={{ display: 'flex' }} />
       </div>
       <div ref={ref} id='map' className='top-[5%] w-[100%] h-[75%]' />
-      <div className='fixed w-[100%] h-[25%] z-10 bg-black rounded-t-2xl px-5 py-5'>
-        <div className='w-[100%] h-[15%] text-[18px] text-white font-semibold flex items-center'>
+      <div className='fixed w-[100%] h-[25%] z-10 bg-white rounded-t-2xl px-5 py-5 border border-t-[1px] border-gray-400'>
+        <div className='w-[100%] h-[15%] text-[18px] text-black font-semibold flex items-center'>
           출발지를 설정해주세요
         </div>
         <div className='w-[100%] h-[15%] font-semibold flex items-center my-5'>
           <SvgArrivalMarker width={'10%'} height={'100%'} />
-          <div className='w-[90%] h-[100%] pl-2 flex items-center text-gray-500'>{departName}</div>
+          <div className='w-[90%] h-[100%] pl-2 flex items-center text-gray-700 text-[18px]'>
+            {departName}
+          </div>
         </div>
         <div className='w-[100%] h-[40%] flex justify-center items-center'>
           <div
             className='w-[80%] h-[70%] bg-OD_PURPLE flex justify-center items-center font-semibold text-[20px] text-white rounded-xl hover:bg-OD_GREEN hover:text-black'
             onClick={() => {
+              if (from === '/home') {
+                nav('/home', { replace: true });
+                return;
+              }
               nav('/party', { replace: true });
             }}>
             설정완료
@@ -227,6 +243,9 @@ const SetDeparture = () => {
   const [search, setSearch] = useState<string>('');
   const [searchData, setSearchData] = useState<IPlaceInfo[]>([]);
   const { departuresLocation } = partyStore();
+  const location = useLocation();
+  const { from } = (location.state as { from: string }) || {};
+  const { depLoc } = autoPartyStore();
   const searchRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
 
@@ -248,11 +267,19 @@ const SetDeparture = () => {
       return;
     }
     try {
-      const res = await jwtAxios.get(
-        `/api/places?query=${searchValue}&latitude=${departuresLocation!.latitude}&longitude=${departuresLocation!.longitude}`,
-      );
-      console.log(res.data.data.content);
-      setSearchData(res.data.data.content);
+      if (from === '/home') {
+        const res = await jwtAxios.get(
+          `/api/places?query=${searchValue}&latitude=${depLoc!.latitude}&longitude=${depLoc!.longitude}`,
+        );
+        console.log(res.data.data.content);
+        setSearchData(res.data.data.content);
+      } else {
+        const res = await jwtAxios.get(
+          `/api/places?query=${searchValue}&latitude=${departuresLocation!.latitude}&longitude=${departuresLocation!.longitude}`,
+        );
+        console.log(res.data.data.content);
+        setSearchData(res.data.data.content);
+      }
     } catch (error) {
       failReq();
     }
@@ -305,7 +332,7 @@ const SetDeparture = () => {
           {searchData.length !== 0 ? (
             <div className='w-[100%] h-[100%] overflow-y-auto'>
               {searchData.map((data: IPlaceInfo) => (
-                <SearchDepartureItem key={data.id} {...data} />
+                <SearchDepartureItem key={data.id} {...data} from={from} />
               ))}
             </div>
           ) : (

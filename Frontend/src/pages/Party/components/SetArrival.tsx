@@ -1,9 +1,9 @@
 import { Status, Wrapper } from '@googlemaps/react-wrapper';
 import { ViteConfig } from '@/apis/ViteConfig';
 import { useState, useEffect, useRef, ChangeEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import partyStore from '@/stores/usePartyStore';
-import LatLngAddStore from '@/stores/useLatLngAddStore';
+import autoPartyStore from '@/stores/useAutoPartyStore';
 import DarkModeStyle from '@/components/Maps/DarkModeStyle';
 import ARRIVAL from '@/assets/image/icons/SETARRIVAL.png';
 import SvgSearch from '@/assets/svg/SvgSearch';
@@ -15,17 +15,28 @@ import { IPlaceInfo } from '@/types/Party';
 import jwtAxios from '@/utils/JWTUtil';
 import SearchArrivalItem from './SearchArrivalItem';
 import { toast } from 'react-toastify';
+import AutoPartyMap from '@/pages/Home/components/AutoPartyMap';
 
 const MapRef = () => {
   const ref = useRef<HTMLDivElement>(null);
   const nav = useNavigate();
+  const location = useLocation();
+  const { from } = (location.state as { from: string }) || {};
   const { setArrivals, arrivalsName, arrivalsLocation } = partyStore();
+  const { setArr, arrName, arrLoc } = autoPartyStore();
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [marker, setMarker] = useState<google.maps.Marker | null>(null);
   const [mapCenter, setMapCenter] = useState<google.maps.LatLng>(
-    new google.maps.LatLng({ lat: arrivalsLocation!.latitude, lng: arrivalsLocation!.longitude }),
+    from === '/home'
+      ? new google.maps.LatLng({ lat: arrLoc!.latitude, lng: arrLoc!.longitude })
+      : new google.maps.LatLng({
+          lat: arrivalsLocation!.latitude,
+          lng: arrivalsLocation!.longitude,
+        }),
   );
-  const [arrName, setArrName] = useState<string>(arrivalsName as string);
+  const [arriveName, setArriveName] = useState<string>(
+    from === '/home' ? (arrName as string) : (arrivalsName as string),
+  );
 
   const successReq = () => {
     return toast.success('도착지가 설정되었습니다.');
@@ -54,8 +65,9 @@ const MapRef = () => {
       lng: pos.coords.longitude,
     });
 
+    setArriveName('내 위치');
     setArrivals?.('내 위치', { latitude: pos.coords.latitude, longitude: pos.coords.longitude });
-    setArrName('내 위치');
+    setArr?.('내 위치', { latitude: pos.coords.latitude, longitude: pos.coords.longitude });
 
     if (map && marker) {
       map!.setZoom(17);
@@ -87,28 +99,45 @@ const MapRef = () => {
       console.log('건물 이름 : ', res.data.data.buildingName);
       console.log('지번 주소 : ', res.data.data.jibunAddress);
       console.log('도로명 주소 : ', res.data.data.roadNameAddress);
-      setArrName(
+      setArriveName(
         res.data.data.placeName === null
           ? res.data.data.buildingName === null
             ? '장소 또는 건물 이름 없음'
             : res.data.data.buildingName
           : res.data.data.placeName,
       );
-      setArrivals?.(
-        res.data.data.placeName === null
-          ? res.data.data.buildingName === null
-            ? '장소 또는 건물 이름 없음'
-            : res.data.data.buildingName
-          : res.data.data.placeName,
-        { longitude: lng, latitude: lat },
-      );
+
+      if (from === '/home') {
+        setArr?.(
+          res.data.data.placeName === null
+            ? res.data.data.buildingName === null
+              ? '장소 또는 건물 이름 없음'
+              : res.data.data.buildingName
+            : res.data.data.placeName,
+          { longitude: lng, latitude: lat },
+        );
+      } else {
+        setArrivals?.(
+          res.data.data.placeName === null
+            ? res.data.data.buildingName === null
+              ? '장소 또는 건물 이름 없음'
+              : res.data.data.buildingName
+            : res.data.data.placeName,
+          { longitude: lng, latitude: lat },
+        );
+      }
+
       successReq();
     } catch (error) {
       failReq();
     }
   };
 
-  console.log(arrivalsName, arrivalsLocation);
+  if (from === '/home') {
+    console.log(arrName, arrLoc);
+  } else {
+    console.log(arrivalsName, arrivalsLocation);
+  }
 
   useEffect(() => {
     if (ref.current) {
@@ -177,18 +206,24 @@ const MapRef = () => {
         <SvgCurLoc style={{ display: 'flex' }} />
       </div>
       <div ref={ref} id='map' className='top-[5%] w-[100%] h-[75%]' />
-      <div className='fixed w-[100%] h-[25%] z-10 bg-black rounded-t-2xl px-5 py-5'>
-        <div className='w-[100%] h-[15%] text-[18px] text-white font-semibold flex items-center'>
+      <div className='fixed w-[100%] h-[25%] z-10 bg-white rounded-t-2xl px-5 py-5 border border-t-[1px] border-gray-400'>
+        <div className='w-[100%] h-[15%] text-[18px] text-black font-semibold flex items-center'>
           도착지를 설정해주세요
         </div>
         <div className='w-[100%] h-[15%] font-semibold flex items-center my-5'>
           <SvgArrivalMarker width={'10%'} height={'100%'} />
-          <div className='w-[90%] h-[100%] pl-2 flex items-center text-gray-500'>{arrName}</div>
+          <div className='w-[90%] h-[100%] pl-2 flex items-center text-gray-700 text-[18px]'>
+            {arriveName}
+          </div>
         </div>
         <div className='w-[100%] h-[40%] flex justify-center items-center'>
           <div
             className='w-[80%] h-[70%] bg-OD_PURPLE flex justify-center items-center font-semibold text-[20px] text-white rounded-xl hover:bg-OD_GREEN hover:text-black'
             onClick={() => {
+              if (from === '/home') {
+                nav('/home', { replace: true });
+                return;
+              }
               nav('/party', { replace: true });
             }}>
             설정완료
@@ -219,6 +254,9 @@ const SetArrival = () => {
   const [search, setSearch] = useState<string>('');
   const [searchData, setSearchData] = useState<IPlaceInfo[]>([]);
   const { departuresLocation } = partyStore();
+  const location = useLocation();
+  const { from } = (location.state as { from: string }) || {};
+  const { depLoc } = autoPartyStore();
   const searchRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
 
@@ -240,11 +278,19 @@ const SetArrival = () => {
       return;
     }
     try {
-      const res = await jwtAxios.get(
-        `/api/places?query=${searchValue}&latitude=${departuresLocation!.latitude}&longitude=${departuresLocation!.longitude}`,
-      );
-      console.log(res.data.data.content);
-      setSearchData(res.data.data.content);
+      if (from === '/home') {
+        const res = await jwtAxios.get(
+          `/api/places?query=${searchValue}&latitude=${depLoc!.latitude}&longitude=${depLoc!.longitude}`,
+        );
+        console.log(res.data.data.content);
+        setSearchData(res.data.data.content);
+      } else {
+        const res = await jwtAxios.get(
+          `/api/places?query=${searchValue}&latitude=${departuresLocation!.latitude}&longitude=${departuresLocation!.longitude}`,
+        );
+        console.log(res.data.data.content);
+        setSearchData(res.data.data.content);
+      }
     } catch (error) {
       failReq();
     }
@@ -297,7 +343,7 @@ const SetArrival = () => {
           {searchData.length !== 0 ? (
             <div className='w-[100%] h-[100%] overflow-y-auto'>
               {searchData.map(data => (
-                <SearchArrivalItem key={data.id} {...data} setIsSearch={setIsSearch} />
+                <SearchArrivalItem key={data.id} {...data} setIsSearch={setIsSearch} from={from} />
               ))}
             </div>
           ) : (

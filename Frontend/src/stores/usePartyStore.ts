@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import useLatLngAddStore from './useLatLngAddStore';
 
 export interface ILocation {
   longitude: number;

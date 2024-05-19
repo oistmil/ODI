@@ -10,7 +10,7 @@ export interface IPlaceInfo {
   distance?: number;
   jibunAddress?: string;
   majorCategory?: string;
-  placeName?: string;
+  placeName?: string | null;
   postalCode?: number;
   roadNameAddress?: string;
   sido?: string;

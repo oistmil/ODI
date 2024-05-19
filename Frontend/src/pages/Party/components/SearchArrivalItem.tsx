@@ -2,14 +2,17 @@ import SvgGoInside from '@/assets/svg/SvgGoInside';
 import { IPlaceInfo } from '@/types/Party';
 import { FC, useRef } from 'react';
 import partyStore from '@/stores/usePartyStore';
+import autoPartyStore from '@/stores/useAutoPartyStore';
 
 interface IArrivalProps extends IPlaceInfo {
   setIsSearch: React.Dispatch<React.SetStateAction<boolean>>;
+  from: string;
 }
 
-const SearchArrivalItem: FC<IArrivalProps> = ({ setIsSearch, ...props }) => {
+const SearchArrivalItem: FC<IArrivalProps> = ({ setIsSearch, from, ...props }) => {
   const dataModalRef = useRef<HTMLDialogElement>(null);
   const { setArrivals } = partyStore();
+  const { setArr } = autoPartyStore();
 
   const openSetArrivalModal = () => {
     if (dataModalRef.current) {
@@ -18,10 +21,31 @@ const SearchArrivalItem: FC<IArrivalProps> = ({ setIsSearch, ...props }) => {
   };
 
   const setData = () => {
-    setArrivals?.(props.placeName as string, {
-      latitude: props.geoPoint!.latitude,
-      longitude: props.geoPoint!.longitude,
-    });
+    if (from === '/home') {
+      setArr?.(
+        props.placeName === null
+          ? props.buildingName === null
+            ? '장소 또는 건물명 미제공'
+            : (props.buildingName as string)
+          : (props.placeName as string),
+        {
+          latitude: props.geoPoint!.latitude,
+          longitude: props.geoPoint!.longitude,
+        },
+      );
+    } else {
+      setArrivals?.(
+        props.placeName === null
+          ? props.buildingName === null
+            ? '장소 또는 건물명 미제공'
+            : (props.buildingName as string)
+          : (props.placeName as string),
+        {
+          latitude: props.geoPoint!.latitude,
+          longitude: props.geoPoint!.longitude,
+        },
+      );
+    }
     setIsSearch(false);
   };
 
@@ -71,9 +95,7 @@ const SearchArrivalItem: FC<IArrivalProps> = ({ setIsSearch, ...props }) => {
               <SvgGoInside />
             </div>
           </div>
-          <div>
-            {props.roadNameAddress} | {props.distance}
-          </div>
+          <div>{props.roadNameAddress}</div>
         </div>
       </div>
     </>
