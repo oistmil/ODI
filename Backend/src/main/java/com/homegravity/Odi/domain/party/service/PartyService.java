@@ -19,6 +19,7 @@ import com.homegravity.Odi.domain.party.respository.PartyMemberRepository;
 import com.homegravity.Odi.domain.party.respository.PartyRepository;
 import com.homegravity.Odi.global.redis.handler.TransactionHandler;
 import com.homegravity.Odi.global.redis.repository.RedisLockRepository;
+import com.homegravity.Odi.global.redis.repository.RedissonLockRepository;
 import com.homegravity.Odi.global.response.error.ErrorCode;
 import com.homegravity.Odi.global.response.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,7 @@ public class PartyService {
 
     private final MapService mapService;
     private final RedisLockRepository redisLockRepository;
+    private final RedissonLockRepository redissonLockRepository;
     private final TransactionHandler transactionHandler;
 
     @Transactional
@@ -97,17 +99,19 @@ public class PartyService {
         return partyRepository.findAllParties(pageable, requestDTO);
     }
 
+    @Transactional
     public Long joinParty(Long partyId, Member member) {
 
         String key = "joinParty_" + partyId.toString() + "_" + member.getId();
 
         //lettuce를 활용한 스핀락 활용
-        return redisLockRepository.runOnLettuceLock(
-                key, () -> transactionHandler.runOnWriteTransaction(
-                        () -> joinPartyLogic(partyId, member)
+        return redissonLockRepository.runOnRedissonLock(
+                key, ()-> transactionHandler.runOnWriteTransaction(
+                        ()-> joinPartyLogic(partyId, member)
                 ));
     }
 
+    @Transactional
     public Long joinPartyLogic(Long partyId, Member member) {
         Party party = getParty(partyId);
 
@@ -138,14 +142,16 @@ public class PartyService {
         return partyMember.getId();
     }
 
+    @Transactional
     public boolean deleteJoinParty(Long partyId, Member member) {
         String key = "deleteJoinParty" + partyId.toString() + "_" + member.getId();
 
-        return redisLockRepository.runOnLettuceLock(
+        return redissonLockRepository.runOnRedissonLock(
                 key, () -> transactionHandler.runOnWriteTransaction(
                         () -> deleteJoinPartyLogic(partyId, member)));
     }
 
+    @Transactional
     public boolean deleteJoinPartyLogic(Long partyId, Member member) {
         Party party = getParty(partyId);
 
