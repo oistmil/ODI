@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, ChangeEvent } from 'react';
 import latLngAddStore from '@/stores/useLatLngAddStore';
 import mapStore from '@/stores/useMapStore';
 import watchPositionHook from '@/hooks/useRefreshLocation';
@@ -24,7 +24,7 @@ import axios from 'axios';
 import { ViteConfig } from '@/apis/ViteConfig';
 import { categoryIcons } from '@/constants/constants';
 import { useMatchSocket } from '@/context/matchSocketProvider';
-import { IParty } from '@/types/Party';
+import { IParty, IPlaceInfo } from '@/types/Party';
 import {
   categoryList,
   categoryColorList,
@@ -38,6 +38,9 @@ import SvgRouteIcon from '@/assets/svg/SvgRouteIcon';
 import SvgTimerIcon from '@/assets/svg/SvgTimerIcon';
 import SvgParticipantsIcon from '@/assets/svg/SvgParticipantsIcon';
 import PartyItemMap from './PartyItemMap';
+import SvgSearch from '@/assets/svg/SvgSearch';
+import SvgGoTo from '@/assets/svg/SvgGoTo';
+import SearchDataItem from '@/pages/Home/components/SearchDataItem.tsx';
 
 interface IAutoMatchData {
   depName?: string;
@@ -495,7 +498,7 @@ const MapRef = () => {
                   <div className='w-[85%]' onClick={goSetDeparture}>
                     <div className='flex justify-between'>
                       <div className='font-bold mb-1 text-[17px] text-black'>
-                        {!!depName ? depName : currentAdd}
+                        {!!depName ? depName : '내 위치'}
                       </div>
                       <div className='w-[10%] flex justify-center items-center'>
                         <img src={Front} alt='출발지 설정' />
@@ -695,49 +698,178 @@ const MapRef = () => {
     </>
   );
 
+  const changeCurLocModalRef = useRef<HTMLDialogElement>(null);
+  const [isOpenChangeCurLoc, setIsOpenChangeCurLoc] = useState(false);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const [search, setSearch] = useState<string>('');
+  const [searchData, setSearchData] = useState<IPlaceInfo[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<IPlaceInfo | null>(null);
+
+  const openChangeCurLocModal = () => {
+    if (changeCurLocModalRef.current) {
+      setIsOpenChangeCurLoc(true);
+      changeCurLocModalRef.current.showModal();
+    }
+  };
+
+  const handleSearch = () => {
+    if (searchRef.current) {
+      searchRef.current.focus();
+    }
+  };
+
+  const failRequest = () => {
+    setSearchData([]);
+    return toast.error('검색 결과가 없습니다.', { toastId: 'arrivalSearch' });
+  };
+
+  const getSearchData = async (searchValue: string) => {
+    if (searchValue === '') {
+      setSearchData([]);
+      return;
+    }
+    try {
+      const res = await jwtAxios.get(
+        `/api/places?query=${searchValue}&latitude=${currentLat}&longitude=${currentLng}`,
+      );
+      console.log(res.data.data.content);
+      setSearchData(res.data.data.content);
+    } catch (error) {
+      failRequest();
+    }
+    // console.log(res);
+  };
+
+  const getLocationBySearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    getSearchData(e.target.value);
+  };
+
+  const handleChangeCurrentLocation = () => {
+    if (selectedLocation && map) {
+      const newCenter = new google.maps.LatLng(
+        selectedLocation.geoPoint!.latitude,
+        selectedLocation.geoPoint!.longitude,
+      );
+      map.setCenter(newCenter);
+      setCurLocAdd(
+        selectedLocation.roadNameAddress || selectedLocation.jibunAddress || '장소 정보 미제공',
+      );
+      setIsOpenChangeCurLoc(false);
+      changeCurLocModalRef.current?.close();
+    }
+  };
+
+  let changeCurLocModal = (
+    <>
+      <dialog
+        ref={changeCurLocModalRef}
+        id='my_modal_4'
+        className={`modal ${isOpenChangeCurLoc ? 'open' : 'close'}`}>
+        <div className='modal-box w-11/12 h-[80%] bg-white flex flex-col' onClick={handleSearch}>
+          <h3 className='font-bold text-black text-[20px]'>위치 변경</h3>
+          <div className='mt-1 border border-gray-300'></div>
+          <div className='w-[100%] h-[10%] z-10 flex justify-center items-center relative'>
+            <div className='w-[100%] h-[60%] flex justify-between items-center px-3 py-2 z-10 absolute left-0 top-[20%]'>
+              <SvgSearch />
+              <SvgGoTo />
+            </div>
+            <input
+              type='text'
+              ref={searchRef}
+              value={search}
+              className='w-[100%] h-[60%] flex items-center bg-black rounded-xl pl-10 pr-10 py-2 text-white relative'
+              placeholder='어디로 가고싶으신가요?'
+              onChange={getLocationBySearch}
+            />
+          </div>
+          <div className='w-[100%] h-[70%]'>
+            {searchData.length !== 0 ? (
+              <div className='w-[100%] h-[100%] overflow-y-auto'>
+                {searchData.map(data => (
+                  <SearchDataItem
+                    key={data.id}
+                    {...data}
+                    setSelectedLocation={setSelectedLocation}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className='w-[100%] h-[100%] flex justify-center items-center font-semibold text-[18px]'>
+                검색 결과가 없습니다.
+              </div>
+            )}
+          </div>
+
+          <div className='modal-action'>
+            <form method='dialog'>
+              <button className='btn btn-sm btn-circle btn-ghost absolute right-5 top-5 text-black'>
+                ✕
+              </button>
+            </form>
+          </div>
+          <button
+            className='btn w-[100%] bg-OD_PURPLE text-white font-bold text-[18px] border-none'
+            onClick={handleChangeCurrentLocation}>
+            현 위치 변경
+          </button>
+        </div>
+      </dialog>
+    </>
+  );
+
   return (
-    <div className='w-[100%] h-[100%]'>
-      <div className='fixed w-[100%] h-[5%] bg-black z-10 flex items-center'>
-        <div className='fixed w-[100%] flex pl-3 text-[18px] font-semibold text-white'>
-          {`${curLocAdd.split(' ')[0]} ${curLocAdd.split(' ')[1] === undefined ? '' : curLocAdd.split(' ')[1]} ${curLocAdd.split(' ')[2] === undefined ? '' : curLocAdd.split(' ')[2]}`}
-        </div>
-        <div className='fixed w-[100%] flex justify-end px-3'>
-          <div
-            className='px-2 z-10 cursor-pointer'
-            onClick={() => {
-              nav('/chatlist');
-            }}>
-            <SvgChat />
+    <>
+      <div className='w-[100%] h-[100%]'>
+        <div className='fixed w-[100%] h-[5%] bg-black z-10 flex items-center'>
+          <div className='w-[80%] flex text-[18px] font-semibold text-white pl-3'>
+            {`${curLocAdd.split(' ')[0]} ${curLocAdd.split(' ')[1] === undefined ? '' : curLocAdd.split(' ')[1]} ${curLocAdd.split(' ')[2] === undefined ? '' : curLocAdd.split(' ')[2]}`}
+            <div
+              className='flex justify-center items-center px-2 cursor-pointer'
+              onClick={openChangeCurLocModal}>
+              <div className='border border-slate-500 rounded-full px-2 text-[12px]'>변경</div>
+            </div>
           </div>
-          <div
-            className='px-2 z-10 cursor-pointer'
-            onClick={() => {
-              nav('/profile');
-            }}>
-            <SvgProfile />
+
+          <div className='w-[20%] flex justify-end pr-3'>
+            <div
+              className='px-2 z-10 cursor-pointer'
+              onClick={() => {
+                nav('/chatlist');
+              }}>
+              <SvgChat />
+            </div>
+            <div
+              className='px-2 z-10 cursor-pointer'
+              onClick={() => {
+                nav('/profile');
+              }}>
+              <SvgProfile />
+            </div>
           </div>
         </div>
+        <div
+          className='fixed w-[50px] h-[50px] bottom-[30%] right-[3%] z-10 flex flex-col justify-center items-center bg-black rounded-full cursor-pointer'
+          onClick={goCurrentLoc}>
+          <SvgCurLoc style={{ display: 'flex' }} />
+        </div>
+        <div ref={ref} id='map' className='w-[100%] h-[100%]' />
+        <button
+          className='absolute btn z-10 w-[15%] h-[5%] bottom-[10%] right-[3%] border-none bg-black text-white hover:text-OD_GREEN'
+          onClick={goCreateParty}>
+          파티 생성
+        </button>
+        {'자동 매칭 모달' && autoMatchModal}
+        <button
+          className='absolute btn z-10 w-[15%] h-[5%] bottom-[20%] right-[3%] border-none bg-black text-white hover:text-OD_GREEN'
+          onClick={openAutoMatchModal}>
+          자동 매칭
+        </button>
+        <BottomSheet />
+        {markerDetail}
+        {changeCurLocModal}
       </div>
-      <div
-        className='fixed w-[50px] h-[50px] bottom-[30%] right-[3%] z-10 flex flex-col justify-center items-center bg-black rounded-full cursor-pointer'
-        onClick={goCurrentLoc}>
-        <SvgCurLoc style={{ display: 'flex' }} />
-      </div>
-      <div ref={ref} id='map' className='w-[100%] h-[100%]' />
-      <button
-        className='absolute btn z-10 w-[15%] h-[5%] bottom-[10%] right-[3%] border-none bg-black text-white hover:text-OD_GREEN'
-        onClick={goCreateParty}>
-        파티 생성
-      </button>
-      {'자동 매칭 모달' && autoMatchModal}
-      <button
-        className='absolute btn z-10 w-[15%] h-[5%] bottom-[20%] right-[3%] border-none bg-black text-white hover:text-OD_GREEN'
-        onClick={openAutoMatchModal}>
-        자동 매칭
-      </button>
-      <BottomSheet />
-      {markerDetail}
-    </div>
+    </>
   );
 };
 
