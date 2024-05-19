@@ -49,11 +49,11 @@ const PartyCreatePage = () => {
   };
 
   const goSetDeparture = () => {
-    nav('departure');
+    nav('/party/departure');
   };
 
   const goSetArrival = () => {
-    nav('arrival');
+    nav('/party/arrival');
   };
 
   const changeMaxParticipants = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -360,7 +360,7 @@ const PartyCreatePage = () => {
         </div>
       </div>
       {'모집인원 및 성별제한 정하는 모달' && passengersModal}
-      <div className='h-[13%] mt-9 mx-8 flex flex-col justify-between'>
+      <div className='h-[15%] mt-9 mx-8 flex flex-col justify-between'>
         <div className='font-bold  text-[18px]'>카테고리</div>
         <div className='text-gray-500'>카테고리를 선택해 주세요.</div>
         <div className='flex gap-3 overflow-x-auto whitespace-nowrap'>

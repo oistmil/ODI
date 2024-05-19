@@ -81,7 +81,7 @@ const SearchArrivalItem: FC<IArrivalProps> = ({ setIsSearch, from, ...props }) =
   return (
     <>
       {'도착지 검색을 통해 출발지 설정하는 모달' && setDepartureModal}
-      <div className='w-[100%] h-[10%] flex justify-center border-b border-slate-700 hover:bg-slate-500'>
+      <div className='w-[100%] h-[10%] flex justify-center border-b border-slate-700 hover:bg-purple-100'>
         <div className='w-[90%]' onClick={openSetArrivalModal}>
           <div className='w-[100%] flex justify-between my-2'>
             <div className='font-semibold'>

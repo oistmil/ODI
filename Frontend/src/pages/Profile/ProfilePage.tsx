@@ -77,7 +77,7 @@ const ProfilePage = () => {
               className='w-[5%] h-[50%] flex justify-center items-center tooltip tooltip-left cursor-pointer'
               onClick={() => {
                 /* TODO : 자세한 프로필 내역 및 수정하기! */
-                nav('detail');
+                nav('/profile/detail');
               }}
               data-tip={`${name}님 회원정보`}>
               <SvgGoInside style={{ width: '24px', height: '24px' }} />
@@ -100,7 +100,7 @@ const ProfilePage = () => {
             <button
               className='w-[60%] h-[30%] flex justify-center items-center bg-OD_YELLOW self-end rounded-xl text-black font-semibold text-[18px]'
               onClick={() => {
-                nav('payments');
+                nav('/profile/payments');
               }}>
               충전하기
             </button>
@@ -109,7 +109,7 @@ const ProfilePage = () => {
           <div
             className='w-[100%] h-[10%] flex flex-col justify-evenly my-3 px-5'
             onClick={() => {
-              nav('party/history');
+              nav('/profile/party/history');
             }}>
             <div className='font-semibold text-black text-[20px]'>이용 내역</div>
             <div className='font-semibold text-black flex justify-end'>
@@ -120,7 +120,7 @@ const ProfilePage = () => {
           <div
             className='w-[100%] h-[10%] flex flex-col justify-evenly my-3 px-5'
             onClick={() => {
-              nav('payments/history');
+              nav('/profile/payments/history');
             }}>
             <div className='font-semibold text-black text-[20px]'>결제 내역</div>
             <div className='font-semibold text-black flex justify-end'>

@@ -86,7 +86,7 @@ const Payments = () => {
 
   return (
     <>
-      <div className='w-[100%] h-[100%] bg-gray-800'>
+      <div className='w-[100%] h-[100%] bg-white'>
         <div className='relative w-[100%] h-[5%] bg-black z-10 flex items-center'>
           <div
             className='px-4 z-10'
@@ -95,36 +95,36 @@ const Payments = () => {
             }}>
             <SvgGoBack />
           </div>
-          <div className='absolute w-[100%] flex justify-center text-[18px] font-semibold text-white'>
+          <div className='absolute w-[100%] flex justify-center text-[18px] font-semibold text-black'>
             포인트 충전
           </div>
         </div>
         <div className='w-[100%] h-[95%] flex flex-col items-center'>
           <div className='w-[100%] h-[15%] flex flex-col justify-evenly my-3 px-5'>
-            <div className='flex font-semibold text-white text-[20px]'>
+            <div className='flex font-semibold text-black text-[20px]'>
               <div className='self-center w-[22px] h-[22px] mx-2'>
                 <img src={COIN} alt='동전' />
               </div>
               내 포인트
             </div>
-            <div className='font-semibold text-white text-[18px] flex justify-end'>
-              {point}
+            <div className='font-semibold text-black text-[18px] flex justify-end'>
+              {point?.toLocaleString()}
               <span className='text-slate-500 px-2'>오디</span>
             </div>
           </div>
           <div className='w-[90%] border-b-2 border-gray-500'></div>
           <div className='w-[90%] px-2 my-4 '>
-            <div className='font-semibold text-[20px] text-white self-center'>충전금액</div>
+            <div className='font-semibold text-[20px] text-black self-center'>충전금액</div>
             <div className='flex justify-between'>
               <input
                 type='text'
-                className='input w-[80%] mt-2'
+                className='input input-bordered w-[80%] mt-2'
                 placeholder='충전 금액을 선택하거나 입력하세요'
                 value={totalAmount}
                 onChange={handleCustomAmountChange}
               />
               <button
-                className='btn w-[10%] mt-2 bg-gray-700 text-white hover:bg-red-500 font-semibold text-[18px]'
+                className='btn w-[10%] mt-2 bg-gray-300 text-black hover:bg-red-500 font-semibold text-[18px]'
                 onClick={() => setTotalAmount('0')}>
                 X
               </button>
@@ -133,12 +133,12 @@ const Payments = () => {
           <div className='w-[90%] border-b-2 border-gray-500'></div>
           {[5000, 10000, 30000, 50000].map(amount => (
             <div key={amount} className='w-[90%] flex justify-between px-2 my-8'>
-              <div className='font-semibold text-[20px] text-white self-center'>
-                {amount}
+              <div className='font-semibold text-[20px] text-black self-center'>
+                {amount.toLocaleString()}
                 <span className='text-slate-500 px-2'>오디</span>
               </div>
               <button
-                className='btn bg-white text-black font-semibold text-[18px] hover:bg-OD_YELLOW'
+                className='btn bg-gray-300 text-black font-semibold text-[18px] hover:bg-OD_YELLOW'
                 onClick={() => handleAmountSelect(amount)}>
                 선택
               </button>

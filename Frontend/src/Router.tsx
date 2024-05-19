@@ -166,7 +166,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: 'party/departure',
+    path: '/party/departure',
     element: (
       <AuthWrapper>
         <SetDeparture />
@@ -174,7 +174,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: 'party/arrival',
+    path: '/party/arrival',
     element: (
       <AuthWrapper>
         <SetArrival />

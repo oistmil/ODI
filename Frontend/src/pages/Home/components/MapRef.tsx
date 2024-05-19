@@ -470,6 +470,10 @@ const MapRef = () => {
     setMarkers(newMarkers);
   };
 
+  const truncateText = (text: string, maxLength: number) => {
+    return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+  };
+
   useEffect(() => {
     if (isAutoMatch) {
       openAutoMatchModal();
@@ -534,7 +538,7 @@ const MapRef = () => {
                     <div className='w-[30%] text-[17px] text-black self-end'>출발지 : </div>
                     <div className='w-[60%] self-end'>
                       <div className='font-bold text-[17px] text-gray-600'>
-                        {autoMatchData.request.depName}
+                        {truncateText(autoMatchData.request.depName as string, 8)}
                       </div>
                     </div>
                   </div>
@@ -542,7 +546,7 @@ const MapRef = () => {
                     <div className='w-[30%] text-[17px] text-black self-center'>도착지 : </div>
                     <div className='w-[60%] self-center'>
                       <div className='font-bold text-[17px] text-gray-600'>
-                        {autoMatchData.request.arrName}
+                        {truncateText(autoMatchData.request.arrName as string, 8)}
                       </div>
                     </div>
                   </div>
