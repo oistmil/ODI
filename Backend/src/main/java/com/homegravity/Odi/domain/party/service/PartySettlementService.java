@@ -133,12 +133,10 @@ public class PartySettlementService {
         partySettlement.paidCost(cost);
 
         // 정산 요청자에게 포인트 입금
-        if (cost > 0) {
-            Member requester = memberRepository.findByIdAndDeletedAtIsNull(partySettlement.getMemberId()).orElseThrow(
-                    () -> new BusinessException(ErrorCode.MEMBER_ID_NOT_EXIST, "알 수 없는 유저입니다.")
-            );
-            pointService.deposit(requester, party, partySettlement.getCost(), cost, member.getNickname());
-        }
+        Member requester = memberRepository.findByIdAndDeletedAtIsNull(partySettlement.getMemberId()).orElseThrow(
+                () -> new BusinessException(ErrorCode.MEMBER_ID_NOT_EXIST, "알 수 없는 유저입니다.")
+        );
+        pointService.deposit(requester, party, partySettlement.getCost(), partyMember.getSettleAmount(), member.getNickname());
 
         // 정산이 완료되었다면, 파티팟 정산 완료 처리
         if (partySettlement.getCost().equals(partySettlement.getCurrentAmount())) {
