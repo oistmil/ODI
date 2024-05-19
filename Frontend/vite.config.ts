@@ -15,6 +15,10 @@ export default defineConfig({
       registerType: 'autoUpdate',
       srcDir: '.',
       filename: 'service-worker.js',
+      workbox: {
+        navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/oauth2\/authorization\/naver/],
+      },
     }),
   ],
   resolve: {
