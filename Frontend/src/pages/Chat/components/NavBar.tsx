@@ -21,6 +21,7 @@ interface INavBarProps {
   arrivalsName: string;
   departuresDate: string;
   state: string;
+  receiptImage: string | null;
   me: IUser;
   roomId: string;
   currentParticipants: number;
@@ -43,6 +44,7 @@ const NavBar: React.FC<INavBarProps> = ({
   arrivalsName,
   departuresDate,
   state,
+  receiptImage,
   me,
   roomId,
   currentParticipants,
@@ -530,6 +532,7 @@ const NavBar: React.FC<INavBarProps> = ({
         <SettlementCheckModal
           info={info}
           paidAmount={me.paidAmount}
+          receiptImage={receiptImage}
           settleAmount={me.settleAmount}
           onClose={() => setIsSettleCheckModalOpen(false)}
           chargeFee={chargeFee}

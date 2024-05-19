@@ -7,6 +7,7 @@ export interface IChatInfo {
   arrivalsName: string;
   departuresDate: string;
   state: string;
+  receiptImage: string | null;
   me: {
     id: number;
     role: string;

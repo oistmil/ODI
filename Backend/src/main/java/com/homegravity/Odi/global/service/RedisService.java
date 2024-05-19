@@ -97,7 +97,7 @@ public class RedisService {
             case NotificationType.QUIT:
                 notification.setContent(party.getTitle() + " 파티의 " + notification.getSenderNickname() + " 님이 퇴장하셨습니다."); break;
             case NotificationType.CONFIRM:
-                notification.setContent(party.getTitle() + " 파티가 성사되었습니다! 🎉");
+                notification.setContent(party.getTitle() + " 파티가 성사되었습니다! 🎉"); break;
             case NotificationType.SETTLEMENT_REQUEST:
                 notification.setContent(party.getTitle()+" 파티의 " + notification.getSenderNickname() + " 님이 정산을 요청하셨습니다."); break;
             case NotificationType.SETTLEMENT_SUCCESS:

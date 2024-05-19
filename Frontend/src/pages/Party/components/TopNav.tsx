@@ -124,7 +124,7 @@ const Modal: React.FC<ModalProps & { fetchData: () => void }> = ({
             팟 확정하기
           </button>
         )}
-        <button className='btn btn-ghost text-black'>팟 수정하기</button>
+        {/* <button className='btn btn-ghost text-black'>팟 수정하기</button> */}
         <button onClick={deleteParty} className='btn btn-ghost text-red-500'>
           팟 삭제하기
         </button>

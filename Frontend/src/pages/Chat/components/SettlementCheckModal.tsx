@@ -12,6 +12,7 @@ interface SettlementCheckModalProps {
   info?: IChatInfo;
   paidAmount: number | null;
   settleAmount: number | null;
+  receiptImage: string | null;
   onClose: () => void;
   chargeFee: () => void;
 }
@@ -26,6 +27,7 @@ const SettlementCheckModal: React.FC<SettlementCheckModalProps> = ({
   info,
   paidAmount,
   settleAmount,
+  receiptImage,
   onClose,
   chargeFee,
 }) => {
@@ -191,20 +193,10 @@ const SettlementCheckModal: React.FC<SettlementCheckModalProps> = ({
       {evalModal}
       <div className='modal modal-open' onClick={onClose}>
         <div role='alert' className='alert shadow-lg ' onClick={handleModalClick}>
-          <button className='btn btn-sm btn-circle absolute right-4 top-4' onClick={onClose}>
+          {/* <button className='btn btn-sm btn-circle absolute right-4 top-4' onClick={onClose}>
             ✕
-          </button>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            className='stroke-current shrink-0 w-6 h-6'>
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth='2'
-              d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'></path>
-          </svg>
+          </button> */}
+          {receiptImage && <img className='w-64 h-64' src={receiptImage} alt='영수증' />}
           <div>
             <h3 className='text-md'>선불 금액 : {paidAmount}</h3>
             <div className='font-bold text-xl'>
@@ -215,7 +207,7 @@ const SettlementCheckModal: React.FC<SettlementCheckModalProps> = ({
               )}
             </div>
           </div>
-          <button onClick={handleChargeAndClose} className='btn btn-sm'>
+          <button onClick={handleChargeAndClose} className='btn btn-md bg-purple-200'>
             정산하기
           </button>
         </div>

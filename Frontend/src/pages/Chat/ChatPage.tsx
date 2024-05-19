@@ -168,6 +168,7 @@ const ChatPage = () => {
             me={info.me}
             roomId={info.roomId}
             currentParticipants={info.currentParticipants}
+            receiptImage={info.receiptImage}
             taxifare={taxifare}
             fetchData={fetchData}
             sendAlarmToParticipants={sendAlarmToParticipants}
