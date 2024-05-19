@@ -51,11 +51,11 @@ public class PointService {
     }
 
     // 포인트 입금
-    public void deposit(Member member, Party party, int wholeCost, int cost) {
+    public void deposit(Member member, Party party, int wholeCost, int cost, String payer) {
         member.updatePoint(cost);
         memberRepository.save(member);
 
-        String detailContent = String.format("%s -> %s (%d원, %d명 동승) [정산자 입금]", party.getDeparturesName(), party.getArrivalsName(), wholeCost, party.getCurrentParticipants());
+        String detailContent = String.format("%s -> %s (%d원, %d명 동승) [정산자 입금] %s님 정산", party.getDeparturesName(), party.getArrivalsName(), wholeCost, party.getCurrentParticipants(), payer);
         pointHistoryRepository.save(PointHistory.createHistory(member, party.getId(), party.getTitle(), detailContent, PointHistoryType.PAYER_SETTLEMENT, cost));
     }
 

@@ -137,7 +137,7 @@ public class PartySettlementService {
             Member requester = memberRepository.findByIdAndDeletedAtIsNull(partySettlement.getMemberId()).orElseThrow(
                     () -> new BusinessException(ErrorCode.MEMBER_ID_NOT_EXIST, "알 수 없는 유저입니다.")
             );
-            pointService.deposit(requester, party, partySettlement.getCost(), cost);
+            pointService.deposit(requester, party, partySettlement.getCost(), cost, member.getNickname());
         }
 
         // 정산이 완료되었다면, 파티팟 정산 완료 처리

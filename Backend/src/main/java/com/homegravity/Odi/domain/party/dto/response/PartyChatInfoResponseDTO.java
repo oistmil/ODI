@@ -49,8 +49,11 @@ public class PartyChatInfoResponseDTO {
     @Schema(description = "채팅방 roomId")
     private String roomId;
 
+    @Schema(description = "영수증 image")
+    private String receiptImage;
+
     @Builder
-    private PartyChatInfoResponseDTO(Long partyId, String title, Integer currentParticipants, String departuresName, String arrivalsName, LocalDateTime departuresDate, StateType state, PartyMemberDTO me, PartyMemberDTO organizer, List<PartyMemberDTO> participants, String roomId) {
+    private PartyChatInfoResponseDTO(Long partyId, String title, Integer currentParticipants, String departuresName, String arrivalsName, LocalDateTime departuresDate, StateType state, PartyMemberDTO me, PartyMemberDTO organizer, List<PartyMemberDTO> participants, String roomId, String receiptImage) {
         this.partyId = partyId;
         this.title = title;
         this.currentParticipants = currentParticipants;
@@ -62,6 +65,7 @@ public class PartyChatInfoResponseDTO {
         this.organizer = organizer;
         this.participants = participants;
         this.roomId = roomId;
+        this.receiptImage = receiptImage;
     }
 
     public static PartyChatInfoResponseDTO of(Party party, PartyMemberDTO me, PartyMemberDTO organizer, List<PartyMemberDTO> participants) {
@@ -77,6 +81,7 @@ public class PartyChatInfoResponseDTO {
                 .organizer(organizer)
                 .participants(participants)
                 .roomId(party.getRoomId())
+                .receiptImage((party.getState().equals(StateType.SETTLING) || party.getState().equals(StateType.SETTLED)) ? party.getPartySettlement().getImage() : null)
                 .build();
     }
 }
