@@ -21,10 +21,13 @@ const PaymentsHistory = () => {
 
   useEffect(() => {
     const paymentsHistory = async () => {
-      const { data } = await axios.get(`${ViteConfig.VITE_BASE_URL}/api/point/history`, {
-        headers: { AUTHORIZATION: `Bearer ${getCookie('Authorization')}` },
-      });
-      // console.log(data.data.content);
+      const { data } = await axios.get(
+        `${ViteConfig.VITE_BASE_URL}/api/point/history?page=0&size=30&sort=createdAt,desc`,
+        {
+          headers: { AUTHORIZATION: `Bearer ${getCookie('Authorization')}` },
+        },
+      );
+      console.log(data.data.content);
       setHistory(data.data.content);
       // console.log(history);
     };
