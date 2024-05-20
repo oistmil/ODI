@@ -11,7 +11,7 @@ import org.hibernate.annotations.SQLDelete;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE party_settlement SET deleted_at = NOW() where party_settlement_id = ?")
+@SQLDelete(sql = "UPDATE party_settlement SET deleted_at = NOW() where party_id = ?")
 public class PartySettlement extends BaseTime {
 
     @Id
