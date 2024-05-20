@@ -105,6 +105,21 @@
 ### 아키텍처
 ![아키텍처](/uploads/78aeb76e97ed57043a6c4c981bf02080/아키텍처.png)
 
+## 🧑‍🧒‍🧒 팀원 소개
+|김태용 | 배성규 |김수민 |이수민 |현수연 |여아정 |
+|-- |-- |-- |-- |-- |-- |  
+| 	| 	| 	| 	| 	| 	|
+| 	| 	| 	| 	| 	| 	|
+
+|이름|포지션|담당|
+|--|--|--|
+|김태용|FE|- 소셜로그인<br>- 구글 지도<br>-파티 생성<br>- 파티 목록<br>- 포인트 충전<br>- 마이페이지<br>- 이용 및 결제 내역<br>- 자동 매칭|
+|배성규|FE|- 파티상세<br>- 채팅<br>- 알림<br>- 채팅목록<br>- 정산|
+|김수민|BE|- Querydsl 설정 및 설계<br>- RestAPI 구현<br>- DB 설계<br>- Redis와 Stomp를 사용한 자동매칭 구현|
+|이수민|BE|- Elasticsearch 이용 장소명 검색 기능 구현<br>- Tosspayments API 이용하여 결제 및 포인트 충전 구현<br>- 정산 기능|
+|현수연|팀장, BE|- infra<br>- WebSocket과 Redis를 활용한 알림 / 채팅 기능|
+|여아정|BE|- 소셜 로그인<br>- security<br>- redis 기반 Lock 적용을 통한 동시성 제어<br>- 파티 신청 및 수락<br>- 파티 이용내역<br>- 매너당도 기능|
+
 ## 🖋️ 요구사항 명세서
 ![스웨거1](/uploads/0b758f6f5818e6ebded17324cf36efc7/스웨거1.png)
 ![스웨거2](/uploads/62a874a83fe858b1f9750ef78ab44cfb/스웨거2.png)
@@ -114,17 +129,7 @@
 ![스키마2](/uploads/ecf0a3c8c4a0a70b65455ecf8276f654/스키마2.png)
 ![스키마3](/uploads/d86a84e72c55a452c14f49c98d124635/스키마3.png)
 ![스키마4](/uploads/aebc2522bff9694c876734ee0f40605b/스키마4.png)
-
-## 🧑‍🧒‍🧒 팀원 소개
-|김태용 | 배성규 |김수민 |이수민 |현수연 |여아정 |
-|-- |-- |-- |-- |-- |-- |  
-| 	| 	| 	| 	| 	| 	|
-
-|이름|포지션|담당|
-|--|--|--|
-|김태용|FE|- 소셜로그인<br>- 구글 지도<br>-파티 생성<br>- 파티 목록<br>- 포인트 충전<br>- 마이페이지<br>- 이용 및 결제 내역<br>- 자동 매칭|
-|배성규|FE|- 파티상세<br>- 채팅<br>- 알림<br>- 채팅목록<br>- 정산|
-|김수민|BE|- Querydsl 설정 및 설계<br>- RestAPI 구현<br>- DB 설계<br>- Redis와 Stomp를 사용한 자동매칭 구현|
-|이수민|BE|- Elasticsearch 이용 장소명 검색 기능 구현<br>- Tosspayments API 이용하여 결제 및 포인트 충전 구현<br>- 정산 기능|
-|현수연|BE|- infra<br>- WebSocket과 Redis를 활용한 알림 / 채팅 기능|
-|여아정|BE|- 소셜 로그인<br>- security<br>- redis 기반 Lock 적용<br>- 파티 신청 및 수락<br>- 파티 이용내역|
+![api1](/uploads/b69b5312270248aa2e01555bacc4b503/api1.png)
+![api2](/uploads/506569808ddb69661bd1d83812fff94d/api2.png)
+![api3](/uploads/a1635ee58fda2ac685860daa02fdd194/api3.png)
+![api4](/uploads/a1e7393f6919a0df9689ded9e841a895/api4.png)
