@@ -4,6 +4,10 @@
 ### 🚕 서비스 설명
 - 택시를 같이 탈 사람을 구하는 서비스
 - 목적지에 도착시 불필요한 개인 정보 교환 없이 정산 가능
+
+### 🎬 오디 홍보 UCC
+[![오디홍보UCC](https://github.com/Gravity-of-home/ODI/assets/108220312/f530ca41-6ef6-4339-b521-3e9fde2c23e9)](https://www.youtube.com/watch?v=kKshhkrzL-Y)
+
 ### ✨ 기획의도
 - 택시 기본요금의 지속적 상승으로 택시비용이 비싸지는 추세
 - 많은 사람들이 택시를 동승하려하는 경향이 나타남
