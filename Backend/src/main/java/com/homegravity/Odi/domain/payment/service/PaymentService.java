@@ -11,6 +11,8 @@ import com.homegravity.Odi.domain.payment.dto.toss.PaymentConfirmation;
 import com.homegravity.Odi.domain.payment.dto.toss.PaymentConfirmation.PaymentDetails;
 import com.homegravity.Odi.domain.payment.dto.toss.PaymentConfirmation.PaymentFailure;
 import com.homegravity.Odi.domain.payment.dto.toss.PSPConfirmationResponseDto;
+import com.homegravity.Odi.domain.payment.dto.toss.PaymentError;
+import com.homegravity.Odi.domain.payment.dto.toss.exception.PSPConfirmationException;
 import com.homegravity.Odi.domain.payment.entity.Payment;
 import com.homegravity.Odi.domain.payment.entity.PaymentHistory;
 import com.homegravity.Odi.domain.payment.entity.PaymentState;
@@ -23,10 +25,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
+
+import java.time.Duration;
+import java.util.concurrent.TimeoutException;
 
 @Service
 @RequiredArgsConstructor
@@ -96,7 +103,29 @@ public class PaymentService {
                 .header("Idempotency-Key", requestDto.getOrderId())
                 .body(Mono.just(requestDto), PaymentRequestDto.class)
                 .retrieve()
+                .onStatus(HttpStatusCode::isError,
+                        clientResponse -> clientResponse.bodyToMono(PaymentFailDto.class)
+                                .flatMap(failure -> {
+                                    PaymentError error = PaymentError.get(failure.getCode());
+                                    return Mono.error(new PSPConfirmationException(
+                                            error.name(),
+                                            error.getDescription(),
+                                            error.isSuccess(),
+                                            error.isFailure(),
+                                            error.isUnknown(),
+                                            error.isRetryableError()
+                                    ));
+                                })
+                )
                 .bodyToMono(PSPConfirmationResponseDto.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
+                        .jitter(0.1)
+                        .filter(exception ->
+                                (exception instanceof PSPConfirmationException &&
+                                        ((PSPConfirmationException) exception).isRetryableError())
+                                        || exception instanceof TimeoutException
+                        )
+                        .onRetryExhaustedThrow(((retryBackoffSpec, retrySignal) -> retrySignal.failure())))
                 .map(PaymentConfirmation::fromResponseDto)
                 .block();
     }
